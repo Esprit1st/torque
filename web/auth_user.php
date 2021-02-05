@@ -89,6 +89,7 @@ if (!$logged_in) {
                 <input class="btn btn-info btn-sm" type="submit" id="formlogin" name="Login" value="Login" />
               </form>
             </div>
+			<a href="auth_signup.php">Sign up</a>
           </div>
         </div>
       </div>

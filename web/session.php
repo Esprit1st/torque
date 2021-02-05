@@ -234,7 +234,7 @@ if (isset($sids[0])) {
 <?php    if ( empty($_SESSION['torque_user']) ) { ?>
           <a class="navbar-brand" href="session.php">Open Torque Viewer</a>
 <?php    } else { ?>
-          <a class="navbar-brand" href="session.php">Open Torque Viewer</a><span class="navbar-brand" style="margin-left:25px;">{ <?php echo $_SESSION['torque_user'] ?><a><img width="20" heigth="20" style="margin-left:10px;margin-top:-2px;" src="./static/logout.png" onClick="location.href='session.php?logout=true'" /></a> }</span>
+          <a class="navbar-brand" href="session.php">Open Torque Viewer</a><span class="navbar-brand" style="margin-left:25px;">{ <a href="auth_signup.php" style="color:white;"><?php echo $_SESSION['torque_user'] ?></a> <a href="session.php?logout=true"><img width="20" heigth="20" style="margin-left:10px;margin-top:-2px;" src="./static/logout.png" /></a> }</span>
 <?php    } ?>
         </div>
       </div>
@@ -471,7 +471,7 @@ if (isset($sids[0])) {
         <h4>Export Data</h4>
         <div class="row center-block" style="padding-bottom:18px;">
 <?php if ($setZoomManually === 0) { ?>
-          <div class="btn-group btn-group-justified">
+          <div id="export" class="btn-group btn-group-justified">
             <a class="btn btn-default" role="button" href="<?php echo './export.php?sid='.$session_id.'&filetype=csv'; ?>">CSV</a>
             <a class="btn btn-default" role="button" href="<?php echo './export.php?sid='.$session_id.'&filetype=json'; ?>">JSON</a>
           </div>
@@ -492,7 +492,7 @@ if (isset($sids[0])) {
         </div>
       </div>
     </div>
-    <script language="javascript" type="text/javascript" src="static/js/torquehelpers2.js"></script>
+	<script language="javascript" type="text/javascript" src="static/js/torquehelpers2.js"></script>
   </body>
 </html>
 <?php //echo "<!-- End session.php at ".date("H:i:s", microtime(true))." -->\r\n"; ?>
