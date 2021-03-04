@@ -1,59 +1,159 @@
 <?php
-require_once("./db.php");
-
 session_start();
 
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Open Torque Viewer</title>
-    <meta name="description" content="Open Torque Viewer">
-    <meta name="author" content="Matt Nicklay">
-    <meta name="author" content="Joe Gullo (surfrock66)">
-    <link rel="stylesheet" href="static/css/bootstrap.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.0/chosen.min.css">
-    <link rel="stylesheet" href="static/css/torque.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
-    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-    <script language="javascript" type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-    <script language="javascript" type="text/javascript" src="static/js/jquery.peity.min.js"></script>
-    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.jquery.min.js"></script>
-  </head>
-  <body>
-    <div class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="session.php">Open Torque Viewer</a>
-        </div>
-        <div id="map-container" class="col-md-7 col-xs-12">&nbsp;</div>
-        <div id="right-container" class="col-md-5 col-xs-12">
-          <div id="right-cell">
-            <h4>Signup</h4>
-            <div class="row center-block" style="padding-bottom:4px;">
-              <form method="post" class="form-horizontal" role="form" action="auth_signup.php" id="formsignup">
-                <label for="username">Username</label><input class="form-control" id="username" type="text" name="user" value="" placeholder="(Username)" />
-                <label for="username">Password</label><input class="form-control" type="password" id="password" name="pass" value="" placeholder="(Password)" />
-				<label for="username">Confirm Password</label><input class="form-control" id="pass2" type="password" name="pass2" value="" placeholder="(Password)" />
-                <label for="username">Email</label><input class="form-control" id="email" type="text" name="email" value="" placeholder="(Email)" />
-<?php
-	if ($_SESSION['torque_logged_in']) {
-?>
-				<label for="username">Torque-eml</label><input class="form-control" id="torqueeml" type="text" name="torqueeml" value="" placeholder="(Torque eml)" />
-				<label for="username">Torque-id</label><input class="form-control" id="torqueid" type="text" name="torqueid" value="" placeholder="(Torque ID)" />
-<?php
+//** forgot password / generate token and save to DB
+if (!$_SESSION['torque_logged_in'] && $_POST["Submit"]=="Send" && $_POST["email"]!="") {
+	if ( validemail($_POST["email"]) ) {
+		$userqry = mysqli_query($con, "SELECT id FROM $db_users_table WHERE email=" . quote_value($_POST["email"]) ) or die(mysqli_error($con));
+		if (mysqli_num_rows($userqry) == 1) {
+			$row = mysqli_fetch_assoc($userqry);
+			$token = bin2hex(random_bytes(32));
+			$userqry= "UPDATE $db_users_table SET `token` = ".quote_value(time() ."@". $token)." WHERE id=" . $row["id"];
+			mysqli_query($con, $userqry) or die(mysqli_error($con));
+			mail($_POST["email"],"Password recovery","This is your password recovery link: https://torquetest.evchargecost.com/forgot.php?token=".$token);
+			$sent=true;
+		}
 	}
+	else $error["email"] = true;
+}
+
+//** new password entered after recovery link clicked
+if (validtoken($_POST["token"]) && $_POST["Submit"]=="Send") {
+	unset($error);
+	$userqry = mysqli_query($con, "SELECT id,email,token FROM $db_users_table WHERE token LIKE " . quote_value("%@".$_POST["token"]) ) or die(mysqli_error($con));
+	if (mysqli_num_rows($userqry) == 1) {
+		$row = mysqli_fetch_assoc($userqry);
+		if (time() - substr($row["token"],0,10) < 30*60) {
+			//** Throw error if password not valid
+			if ( !validpassword($_POST["pass"]) ) { $error["pass"] = true; }
+			//** Throw error if passwords don't match
+			else if ($_POST["pass"]!=$_POST["pass2"]) { $error["pass2"] = true; }
+			if (!$error) {
+				$data["password"]=password_hash($_POST["pass"], PASSWORD_DEFAULT);;
+				$data["token"]="";
+				foreach ($data as $key => $value) {
+					$entries[] = $key ." = ". quote_value($value);
+				}
+				$userqry = mysqli_query($con, "UPDATE users SET ". implode(", ", $entries) .
+					" WHERE id='" . $row["id"] . "'") or die(mysqli_error($con));
+				mail($row["email"],"Password reset","Your password on www.ev-charge-cost.com has been reset.\nIf you did not reset your password, get in contact with the admin.");
+				header("Location: /session.php");
+			}
+		}
+	}
+}
+
+//** if signup data has been submitted
+if (!$_SESSION['torque_logged_in'] && $_POST["Submit"]=="Submit") {
+	//** Throw error if username not valid
+	if ( !validusername($_POST["user"]) ) { $error["user"] = 1; }
+	//** Throw error if username not available
+	else if ( !availableusername($_POST["user"]) ) { $error["user"] = 2; }
+	//** Throw error if password not valid
+	if ( !validpassword($_POST["pass"]) ) { $error["pass"] = true; }
+	//** Throw error if passwords don't match
+	else if ($_POST["pass"]!=$_POST["pass2"]) { $error["pass2"] = true; }
+	//** Throw error if email not valid
+	if ( !validemail($_POST["email"]) ) { $error["email"] = true; }
+	
+	$user=$_POST["user"];
+	$pass=$_POST["pass"];
+	$pass2=$_POST["pass2"];
+	$email=$_POST["email"];
+	$torqueeml=$_POST["torqueeml"];
+	$torqueid=$_POST["torqueid"];
+
+	//** insert new user into database
+	if (!$error) {
+		$data["username"]=$user;
+		$data["password"]=password_hash($pass, PASSWORD_DEFAULT);;
+		$data["email"]=$email;
+		$data["token"]="";
+		$data["salt"]="";
+		$data["torque_eml"]="";
+		$data["torque_id"]="";
+		$userqry= "INSERT INTO $db_users_table (".quote_names(array_keys($data)).") VALUES (".quote_values(array_values($data)).")" ;
+//$debug = $userqry;
+		mysqli_query($con, $userqry) or die(mysqli_error($con));
+	}
+}
+
+//** if user logged in
+//** update user credentials
+//** read user data from database
+if ($_SESSION['torque_logged_in']) {
+	//** update user in database
+	if ($_POST["Submit"]=="Submit") {
+		//** Throw error if password not valid
+		if ( !validpassword($_POST["pass"]) ) { $error["pass"] = true; }
+		//** Throw error if passwords don't match
+		else if ($_POST["pass"]!=$_POST["pass2"]) { $error["pass2"] = true; }
+		//** If both passwords are empty remove error
+		if (empty($_POST["pass"]) && empty($_POST["pass2"])) { unset($error["pass"]); unset($error["pass2"]); }
+		//** Throw error if email not valid
+		if ( !validemail($_POST["email"]) ) { $error["email"] = true; }
+		//** update userdata to database
+		if (!$error ) {
+			//** If Password is set, generate hash and save to DB
+			if ($_POST["pass"] != "") $data["password"] = password_hash($_POST["pass"], PASSWORD_DEFAULT);
+			$data["email"]=$_POST["email"];
+			$data["torque_eml"]=$_POST["torque_eml"];
+			foreach ($data as $key => $value) {
+				$entries[] = $key ." = ". quote_value($value);
+				//$debug.=$_POST[$value];
+			}
+			$userqry = mysqli_query($con, "UPDATE users SET ". implode(", ", $entries) .
+				" WHERE id='" . $_SESSION['torque_userid'] . "'") or die(mysqli_error($con));
+		}
+	}
+
+	//** fill form from database
+	$userqry = mysqli_query($con, "SELECT username, email, torque_eml, torque_id
+		FROM $db_users_table
+		WHERE username='" . $_SESSION['torque_user'] . "'") or die(mysqli_error($con));
+	if (mysqli_num_rows($userqry) > 0) {
+		// output data
+		while($row = mysqli_fetch_assoc($userqry)) {
+			$user = $row["username"];
+			$email = $row["email"];
+			$torque_eml = $row["torque_eml"];
+			$torque_id = $row["torque_id"];
+		}
+	}
+}
+
+function validusername($var) {
+	//** Minimum 4 characters, maximum 15 characters, allowed are lower english, upper english characters, numbers, - _
+	if ( preg_match("/^[a-zA-Z0-9_-]{4,15}$/", $var) ) return true;
+}
+
+function availableusername($var) {
+	//** check if username is taken
+	global $db_users_table, $con;
+	$userqry = mysqli_query($con, "SELECT username FROM $db_users_table	WHERE username='" . $var . "'") or die(mysqli_error($con));
+	if (mysqli_num_rows($userqry) > 0) return false;
+	else return true;
+}
+
+function validpassword($var) {
+	//** Since it is prehashed on the client we just check that it's a valid md5 checksum
+	if ( preg_match("/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,32}$/", $var) ) return true;
+}
+
+function validemail($var) {
+	//** email
+	if ( preg_match("/^[^@:; \t\r\n]+@[^@:; \t\r\n]+\.[^@:; \t\r\n]+$/", $var) ) return true;
+}
+
+function validtorqueeml($var) {
+	//** torque_eml
+	//if ( preg_match("/^[^@:; \t\r\n]+@[^@:; \t\r\n]+\.[^@:; \t\r\n]+$/", $var) ) return true;
+	return true;
+}
+
+function validtoken($var) {
+	//** token
+	if ( preg_match("/^[a-f0-9]*$/", $var) ) return true;
+}
+
 ?>
-				<br /><input class="form-control" type="submit" id="formlogin" name="Submit" value="Submit" />
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </body>
-</html>

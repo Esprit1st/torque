@@ -234,7 +234,7 @@ if (isset($sids[0])) {
 <?php    if ( empty($_SESSION['torque_user']) ) { ?>
           <a class="navbar-brand" href="session.php">Open Torque Viewer</a>
 <?php    } else { ?>
-          <a class="navbar-brand" href="session.php">Open Torque Viewer</a><span class="navbar-brand" style="margin-left:25px;">{ <a href="auth_signup.php" style="color:white;"><?php echo $_SESSION['torque_user'] ?></a> <a href="session.php?logout=true"><img width="20" heigth="20" style="margin-left:10px;margin-top:-2px;" src="./static/logout.png" /></a> }</span>
+          <a class="navbar-brand" href="session.php">Open Torque Viewer</a><span class="navbar-brand" style="margin-left:25px;">{ <a href="signup.php" style="color:white;"><?php echo $_SESSION['torque_user'] ?></a> <a href="session.php?logout=true"><img width="20" heigth="20" style="margin-left:10px;margin-top:-2px;" src="./static/logout.png" /></a> }</span>
 <?php    } ?>
         </div>
       </div>

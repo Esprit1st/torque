@@ -10,6 +10,7 @@ $db_name = 'torque';
 $db_table = 'raw_logs';
 $db_keys_table = 'torque_keys';
 $db_sessions_table = 'sessions';
+$db_users_table = 'users';
 
 // Array of user credentials for Browser login
 $users = array();
