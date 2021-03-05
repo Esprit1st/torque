@@ -67,7 +67,7 @@ mysqli_close($con);
           });
         });
 	
-        $("select[contenteditable=true]").blur(function(){
+        $("select").change(function(){
           var field_pid = $(this).attr("id");
           var value = $(this).val();
           $.post('pid_commit.php' , field_pid + "=" + value, function(data) {
@@ -108,7 +108,7 @@ mysqli_close($con);
           <td id="description:<?php echo $keycol['id']; ?>" contenteditable="true"><?php echo $keycol['description']; ?></td>
           <td id="units:<?php echo $keycol['id']; ?>" contenteditable="true"><?php echo $keycol['units']; ?></td>
           <td>
-            <select  id="type:<?php echo $keycol['id']; ?>" contenteditable="true">
+            <select id="type:<?php echo $keycol['id']; ?>">
               <!--<option value="boolean"<?php //if ($keycol['type'] == "boolean") echo ' selected'; ?>>boolean</option>-->
               <option value="double"<?php if ($keycol['type'] == "double") echo ' selected'; ?>>double</option>
               <option value="float"<?php if ($keycol['type'] == "float") echo ' selected'; ?>>float</option>
