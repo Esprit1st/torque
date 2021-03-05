@@ -38,7 +38,6 @@ mysqli_close($con);
     <script language="javascript" type="text/javascript" src="static/js/jquery.peity.min.js"></script>
     <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.jquery.min.js"></script>
     <script language="javascript" type="text/javascript" src="static/js/torquehelpers.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script>
       $(function(){
         var message_status = $("#status");
