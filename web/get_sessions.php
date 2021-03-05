@@ -50,13 +50,14 @@ if ( $filteryearmonth <> "%" || $filterprofile <> "%") {
 if ( isset($_GET['id'])) {
 	$sessionqrystring = $sessionqrystring . $orselector . "( session LIKE " . quote_value($_GET['id']) . " )";
 }
+$sessionqrystring = $sessionqrystring . " AND eml=" . quote_value($_SESSION['torque_eml']);
 $sessionqrystring = $sessionqrystring . " GROUP BY session, profileName, timestart, timeend, sessionsize ORDER BY session DESC";
 // Get list of unique session IDs
 $sessionqry = mysqli_query($con, $sessionqrystring) or die(mysqli_error($con));
 
 // If you get no results, just pull the last 20
 if ( mysqli_num_rows( $sessionqry ) == 0 ) {
-	$sessionqry = mysqli_query($con, "SELECT timestart, timeend, session, profileName, sessionsize FROM $db_sessions_table GROUP BY session, profileName, timestart, timeend, sessionsize ORDER BY session DESC LIMIT 20") or die(mysqli_error($con));
+	$sessionqry = mysqli_query($con, "SELECT timestart, timeend, session, profileName, sessionsize FROM $db_sessions_table WHERE eml=" . quote_value($_SESSION['torque_eml']) . " GROUP BY session, profileName, timestart, timeend, sessionsize ORDER BY session DESC LIMIT 20") or die(mysqli_error($con));
 }
 
 // Create an array mapping session IDs to date strings
