@@ -10,7 +10,7 @@ if (isset($_GET["sid"])) {
     $db_table_full = "{$db_table}_{$tableYear}_{$tableMonth}";
     if (isset($_GET["from"]) && isset($_GET["to"])) {
 	// if a selection on the graph has been made, only export that selection
-	$sql = mysqli_query($con, "SELECT * FROM $db_table_full join $db_sessions_table on $db_table_full.session = $db_sessions_table.session WHERE $db_table_full.session=".quote_value($session_id)." AND $db_table_full.time > ".$_GET['from']." AND $db_table_full.time < ".$_GET['to']." ORDER BY $db_table_full.time DESC;") or die(mysqli_error($con));
+	$sql = mysqli_query($con, "SELECT * FROM $db_table_full join $db_sessions_table on $db_table_full.session = $db_sessions_table.session WHERE $db_table_full.session=".quote_value($session_id)." AND $db_table_full.time > ".quote_value($_GET['from'])." AND $db_table_full.time < ".quote_value($_GET['to'])." ORDER BY $db_table_full.time DESC;") or die(mysqli_error($con));
     }
     else {
 	// export full session
