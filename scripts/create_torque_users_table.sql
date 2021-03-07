@@ -10,7 +10,7 @@ CREATE TABLE `users` (
   `token` tinytext NOT NULL,
   `salt` varchar(256) NOT NULL,
   `torque_eml` tinytext NOT NULL,
-  `torque_id` tinytext NOT NULL
+  `active` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
