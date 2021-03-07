@@ -57,6 +57,12 @@ function get_id()
     return $id;
 }
 
+//** Get torque-eml from torque app GET request
+function get_eml() {
+	if (isset($_GET["eml"])) {
+        if (validtorqueeml($_GET["eml"])) return $_GET["eml"];
+    }
+}
 
 //True if User/Pass match those of creds.php
 //If both $auth_user and $auth_pass are empty, all passwords are accepted.
@@ -95,7 +101,7 @@ function auth_user()
 function auth_db_user($user, $pass) {
 	//** check if login is correct
 	global $db_users_table, $con;
-	$userqry = mysqli_query($con, "SELECT id, username, password, torque_eml FROM $db_users_table WHERE username='" . $user . "'") or die(mysqli_error($con));
+	$userqry = mysqli_query($con, "SELECT id, username, password, torque_eml FROM $db_users_table WHERE username=" . quote_value($user) . " AND active<>'0'") or die(mysqli_error($con));
 	if (mysqli_num_rows($userqry) != 1) return false;
 	else {
 		$row = mysqli_fetch_assoc($userqry);
@@ -152,6 +158,25 @@ function auth_id()
         return true;
     }
     return false;
+}
+
+//** This will return the user-id extracted from the user-db using the torque-eml when the app uploads data
+function auth_db_id()
+{
+	global $db_users_table, $con;
+	$eml=get_eml();
+	$userqry = mysqli_query($con, "SELECT id FROM $db_users_table WHERE torque_eml=" . quote_value($eml) . " AND active<>'0'") or die(mysqli_error($con));
+	if (mysqli_num_rows($userqry) != 1) return false;
+	else {
+		$row = mysqli_fetch_assoc($userqry);
+		return $row["id"];
+	}
+}
+
+function validtorqueeml($var) {
+	//** torque_eml
+	//if ( preg_match("/^[^@:; \t\r\n]+@[^@:; \t\r\n]+\.[^@:; \t\r\n]+$/", $var) ) return true;
+	return true;
 }
 
 function logout_user()

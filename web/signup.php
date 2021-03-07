@@ -52,7 +52,6 @@ require_once("./auth_signup.php");
 	if ($_SESSION['torque_logged_in']) {
 ?>
 				<div class="form-group"><label class="control-label" for="torque_eml">Torque-eml</label><input class="form-control" id="torque_eml" type="text" name="torque_eml" value="<?php echo $torque_eml; ?>" placeholder="(Torque eml)" /></div>
-				<div class="form-group"><label class="control-label" for="torque_id">Torque-id</label><input class="form-control" id="torque_id" type="text" name="torque_id" value="<?php echo $torque_id; ?>" placeholder="(Torque ID)" /></div>
 <?php
 	}
 ?>

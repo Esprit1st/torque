@@ -71,7 +71,7 @@ if (!$_SESSION['torque_logged_in'] && $_POST["Submit"]=="Submit") {
 		$data["token"]="";
 		$data["salt"]="";
 		$data["torque_eml"]="";
-		$data["torque_id"]="";
+		$data["active"]="";
 		$userqry= "INSERT INTO $db_users_table (".quote_names(array_keys($data)).") VALUES (".quote_values(array_values($data)).")" ;
 //$debug = $userqry;
 		mysqli_query($con, $userqry) or die(mysqli_error($con));
@@ -108,7 +108,7 @@ if ($_SESSION['torque_logged_in']) {
 	}
 
 	//** fill form from database
-	$userqry = mysqli_query($con, "SELECT username, email, torque_eml, torque_id
+	$userqry = mysqli_query($con, "SELECT username, email, torque_eml, active
 		FROM $db_users_table
 		WHERE username='" . $_SESSION['torque_user'] . "'") or die(mysqli_error($con));
 	if (mysqli_num_rows($userqry) > 0) {
@@ -117,7 +117,7 @@ if ($_SESSION['torque_logged_in']) {
 			$user = $row["username"];
 			$email = $row["email"];
 			$torque_eml = $row["torque_eml"];
-			$torque_id = $row["torque_id"];
+			$active = $row["active"];
 		}
 	}
 }
@@ -143,12 +143,6 @@ function validpassword($var) {
 function validemail($var) {
 	//** email
 	if ( preg_match("/^[^@:; \t\r\n]+@[^@:; \t\r\n]+\.[^@:; \t\r\n]+$/", $var) ) return true;
-}
-
-function validtorqueeml($var) {
-	//** torque_eml
-	//if ( preg_match("/^[^@:; \t\r\n]+@[^@:; \t\r\n]+\.[^@:; \t\r\n]+$/", $var) ) return true;
-	return true;
 }
 
 function validtoken($var) {
