@@ -87,3 +87,50 @@ $(document).ready(function(){
 function placemarker(marker) {
 	markericon.getSource().getFeatures()[0].getGeometry().setCoordinates(coordinates[marker]);
 }
+
+// form validation
+var showErrorSuccess = function(element, status) {
+  if (status === false) {
+    element.parent().addClass('has-error');
+	element.parent().find('[id*="Help"]').removeClass('hidden')
+    return false;
+  }
+  element.parent().removeClass('has-error').addClass('has-success');
+  element.parent().find('[id*="Help"]').addClass('hidden')
+};
+
+// form validation
+var validate = function() {
+  //validate name
+  var name = $('#username').val(),
+    nameReg = /^[a-zA-Z0-9_-]{4,15}$/
+  if (!nameReg.test(name)) {
+    return showErrorSuccess($('#username'), false);
+  }
+  showErrorSuccess($('#username'));
+
+  //validate password
+  var password = $('#password').val(),
+    passwordReg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,32}$/
+  if (password.length>0) {
+	  if (!passwordReg.test(password)) {
+		return showErrorSuccess($('#password'), false);
+	  }
+  }
+  showErrorSuccess($('#password'));
+
+  //password & pass2 match
+  var pass2 = $('#pass2').val();
+  if (password != pass2) {
+    return showErrorSuccess($('#pass2'), false);
+  }
+  showErrorSuccess($('#pass2'));
+
+  //validate email
+  var email = $('#email').val(),
+    emailReg = /^[^@:; \t\r\n]+@[^@:; \t\r\n]+\.[^@:; \t\r\n]+$/
+  if (!emailReg.test(email) || email == '') {
+    return showErrorSuccess($('#email'), false);
+  }
+  showErrorSuccess($('#email'));
+};

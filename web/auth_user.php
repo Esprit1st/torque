@@ -89,7 +89,10 @@ if (!$logged_in) {
                 <input class="btn btn-info btn-sm" type="submit" id="formlogin" name="Login" value="Login" />
               </form>
             </div>
+			<a href="signup.php">Sign up</a><br />
+			<a href="forgot.php">Forgot Password?</a>
           </div>
+		  <?php echo $debug ?>
         </div>
       </div>
     </div>

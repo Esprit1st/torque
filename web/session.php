@@ -234,7 +234,7 @@ if (isset($sids[0])) {
 <?php    if ( empty($_SESSION['torque_user']) ) { ?>
           <a class="navbar-brand" href="session.php">Open Torque Viewer</a>
 <?php    } else { ?>
-          <a class="navbar-brand" href="session.php">Open Torque Viewer</a><span class="navbar-brand" style="margin-left:25px;">{ <?php echo $_SESSION['torque_user'] ?><a><img width="20" heigth="20" style="margin-left:10px;margin-top:-2px;" src="./static/logout.png" onClick="location.href='session.php?logout=true'" /></a> }</span>
+          <a class="navbar-brand" href="session.php">Open Torque Viewer</a><span class="navbar-brand" style="margin-left:25px;">{ <a href="signup.php" style="color:white;"><?php echo $_SESSION['torque_user'] ?></a> <a href="session.php?logout=true"><img width="20" heigth="20" style="margin-left:10px;margin-top:-2px;" src="./static/logout.png" /></a> }</span>
 <?php    } ?>
         </div>
       </div>
@@ -492,7 +492,7 @@ if (isset($sids[0])) {
         </div>
       </div>
     </div>
-    <script language="javascript" type="text/javascript" src="static/js/torquehelpers2.js"></script>
+	<script language="javascript" type="text/javascript" src="static/js/torquehelpers2.js"></script>
   </body>
 </html>
 <?php //echo "<!-- End session.php at ".date("H:i:s", microtime(true))." -->\r\n"; ?>

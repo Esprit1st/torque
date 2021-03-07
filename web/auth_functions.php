@@ -68,7 +68,16 @@ function auth_user()
     $user = get_user();
     $pass = get_pass();
 
-    //No User/Pass defined: Allow everything
+	//** User credentials correct?
+	if ($userid = auth_db_user($user, $pass)) {
+		$_SESSION['torque_user'] = $user;
+		$_SESSION['torque_userid'] = $userid;
+		return true;
+	}
+	else return false;
+
+    // THIS PART IS OLD AND NEEDS TO GO, just left in for eventual debugging
+	//No User/Pass defined: Allow everything
     if ( !isset($users) || empty($users) ) {
         return true;
     } else {
@@ -81,6 +90,23 @@ function auth_user()
     }
 
     return false;
+}
+
+function auth_db_user($user, $pass) {
+	//** check if login is correct
+	global $db_users_table, $con;
+	$userqry = mysqli_query($con, "SELECT id, username, password, torque_eml FROM $db_users_table WHERE username='" . $user . "'") or die(mysqli_error($con));
+	if (mysqli_num_rows($userqry) != 1) return false;
+	else {
+		$row = mysqli_fetch_assoc($userqry);
+		//$user, $pass, $row["username"], $row["password"]
+		if (password_verify($pass, $row["password"])) {
+			$_SESSION['torque_eml'] = $row["torque_eml"];
+			return $row["id"];
+		}
+		else return false;
+		$debug="good";
+	}
 }
 
 
