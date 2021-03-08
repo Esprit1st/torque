@@ -24,7 +24,7 @@ if (isset($deletesession) && !empty($deletesession)) {
 		$range = "";
 		$delresult = mysqli_query($con, "DELETE FROM $db_sessions_table WHERE session=" . quote_value($deletesession) . " AND eml=" . quote_value($_SESSION["torque_eml"]) ) or die(mysqli_error($con));
 	}
-	$delresult = mysqli_query($con, "DELETE FROM $db_table_full WHERE session=".quote_value($deletesession).$range) or die(mysqli_error($con));
+	$delresult = mysqli_query($con, "DELETE FROM $db_table_full WHERE session=" . quote_value($deletesession).$range . " AND user=" . quote_value($_SESSION["torque_userid"])) or die(mysqli_error($con));
 }
 //echo "<!-- End del_session.php at ".date("H:i:s", microtime(true))." -->\r\n";
 ?>
