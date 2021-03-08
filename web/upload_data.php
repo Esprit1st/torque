@@ -18,11 +18,11 @@ if (mysqli_num_rows($result) > 0) {
 if (sizeof($_GET) > 0) {
 
 	// ABRP forwarding
-	if ($use_abrp) {
+	if ($use_abrp && $user["abrp"]!="") {
 		foreach ($_GET as $key => $value) {
 			$out[] = $key ."=". $value;
 		}
-		$result = file_get_contents($abrp_forward_url . '?' . implode("&", $out));
+		$result = file_get_contents($user["abrp"] . '?' . implode("&", $out));
 	}
 
   $keys = array();
@@ -191,7 +191,7 @@ if (sizeof($_GET) > 0) {
   $datakeys = $keys;
   $datavalues = $values;
   $datakeys[] = 'user';
-  $datavalues[] = $user_id;
+  $datavalues[] = $user["id"];
   $datakeys[] = 'session';
   $datavalues[] = $sessuploadid;
   $datakeys[] = 'time';

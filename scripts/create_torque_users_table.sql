@@ -8,7 +8,7 @@ CREATE TABLE `users` (
   `password` tinytext NOT NULL,
   `email` tinytext NOT NULL,
   `token` tinytext NOT NULL,
-  `salt` varchar(256) NOT NULL,
+  `abrp` tinytext NOT NULL,
   `torque_eml` tinytext NOT NULL,
   `active` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

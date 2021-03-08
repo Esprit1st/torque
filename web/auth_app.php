@@ -45,7 +45,7 @@ if(!isset($auth_user_with_torque_id)) {
 if (!$logged_in && $auth_user_with_torque_id)
 {
     //if ( auth_id() )
-	if ( $user_id = auth_db_id() )
+	if ( $user = auth_db_id() )
     {
 		$session_id = get_id();
         $logged_in = true;

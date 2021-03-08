@@ -98,6 +98,7 @@ if ($_SESSION['torque_logged_in']) {
 			if ($_POST["pass"] != "") $data["password"] = password_hash($_POST["pass"], PASSWORD_DEFAULT);
 			$data["email"]=$_POST["email"];
 			$data["torque_eml"]=$_POST["torque_eml"];
+			$data["abrp"]=$_POST["abrp"];
 			foreach ($data as $key => $value) {
 				$entries[] = $key ." = ". quote_value($value);
 				//$debug.=$_POST[$value];
@@ -108,7 +109,7 @@ if ($_SESSION['torque_logged_in']) {
 	}
 
 	//** fill form from database
-	$userqry = mysqli_query($con, "SELECT username, email, torque_eml, active
+	$userqry = mysqli_query($con, "SELECT username, email, torque_eml, abrp, active
 		FROM $db_users_table
 		WHERE username='" . $_SESSION['torque_user'] . "'") or die(mysqli_error($con));
 	if (mysqli_num_rows($userqry) > 0) {
@@ -117,6 +118,7 @@ if ($_SESSION['torque_logged_in']) {
 			$user = $row["username"];
 			$email = $row["email"];
 			$torque_eml = $row["torque_eml"];
+			$abrp = $row["abrp"];
 			$active = $row["active"];
 		}
 	}

@@ -37,9 +37,8 @@ $show_session_length = true;
 #Sessions less than limit will not be shown
 $min_session_size = 20;
 
-#ABRP forwarding URL
+#ABRP forwarding active
 $use_abrp = true;
-$abrp_forward_url = 'http://api.iternio.com/1/tlm/kona64';
 
 //echo "<!-- End creds.php -->\r\n";
 ?>

@@ -165,11 +165,11 @@ function auth_db_id()
 {
 	global $db_users_table, $con;
 	$eml=get_eml();
-	$userqry = mysqli_query($con, "SELECT id FROM $db_users_table WHERE torque_eml=" . quote_value($eml) . " AND active<>'0'") or die(mysqli_error($con));
+	$userqry = mysqli_query($con, "SELECT id, abrp FROM $db_users_table WHERE torque_eml=" . quote_value($eml) . " AND active<>'0'") or die(mysqli_error($con));
 	if (mysqli_num_rows($userqry) != 1) return false;
 	else {
 		$row = mysqli_fetch_assoc($userqry);
-		return $row["id"];
+		return array("id" => $row["id"], "abrp" => $row["abrp"]);
 	}
 }
 
