@@ -55,13 +55,14 @@ if (!$_SESSION['torque_logged_in'] && $_POST["Submit"]=="Submit") {
 	else if ($_POST["pass"]!=$_POST["pass2"]) { $error["pass2"] = true; }
 	//** Throw error if email not valid
 	if ( !validemail($_POST["email"]) ) { $error["email"] = true; }
+	//** Throw error if torque-eml not valid
+	if ( !empty($_POST["torque_eml"]) && !validtorqueeml($_POST["torque_eml"]) ) { $error["torque_eml"] = true; }
 	
 	$user=$_POST["user"];
 	$pass=$_POST["pass"];
 	$pass2=$_POST["pass2"];
 	$email=$_POST["email"];
-	$torqueeml=$_POST["torqueeml"];
-	$torqueid=$_POST["torqueid"];
+	$torqueeml=$_POST["torque_eml"];
 
 	//** insert new user into database
 	if (!$error) {
@@ -71,7 +72,7 @@ if (!$_SESSION['torque_logged_in'] && $_POST["Submit"]=="Submit") {
 		$data["token"]="";
 		$data["salt"]="";
 		$data["torque_eml"]="";
-		$data["active"]="";
+		$data["active"]="1";
 		$userqry= "INSERT INTO $db_users_table (".quote_names(array_keys($data)).") VALUES (".quote_values(array_values($data)).")" ;
 //$debug = $userqry;
 		mysqli_query($con, $userqry) or die(mysqli_error($con));
@@ -92,6 +93,8 @@ if ($_SESSION['torque_logged_in']) {
 		if (empty($_POST["pass"]) && empty($_POST["pass2"])) { unset($error["pass"]); unset($error["pass2"]); }
 		//** Throw error if email not valid
 		if ( !validemail($_POST["email"]) ) { $error["email"] = true; }
+		//** Throw error if torque-eml not valid
+		if ( !empty($_POST["torque_eml"]) && !validtorqueeml($_POST["torque_eml"]) ) { $error["torque_eml"] = true; }
 		//** update userdata to database
 		if (!$error ) {
 			//** If Password is set, generate hash and save to DB

@@ -133,4 +133,12 @@ var validate = function() {
     return showErrorSuccess($('#email'), false);
   }
   showErrorSuccess($('#email'));
+  
+  //validate torque eml
+  var teml = $('#torque_eml').val(),
+    torqueemlReg = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/
+  if (!torqueemlReg.test(teml)) {
+    if (teml != '') return showErrorSuccess($('#torque_eml'), false);
+  }
+  showErrorSuccess($('#torque_eml'));
 };
