@@ -190,6 +190,8 @@ if (sizeof($_GET) > 0) {
 #  $datavalues = array_merge($values, $sessuploadid, $sesstime);
   $datakeys = $keys;
   $datavalues = $values;
+  $datakeys[] = 'user';
+  $datavalues[] = $user_id;
   $datakeys[] = 'session';
   $datavalues[] = $sessuploadid;
   $datakeys[] = 'time';

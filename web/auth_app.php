@@ -47,7 +47,7 @@ if (!$logged_in && $auth_user_with_torque_id)
     //if ( auth_id() )
 	if ( $user_id = auth_db_id() )
     {
-        $session_id = get_id();
+		$session_id = get_id();
         $logged_in = true;
     }
 }
@@ -58,7 +58,7 @@ if (!$logged_in) {
     $txt  = "ERROR. Please authenticate with ";
     $txt .= ($auth_user_with_user_pass?"User/Password":"");
     $txt .= ( ($auth_user_with_user_pass && $auth_user_with_torque_id)?" or ":"");
-    $txt .= ($auth_user_with_torque_id?"Torque-ID":"");
+    $txt .= ($auth_user_with_torque_id?"Torque-EML":"");
     echo $txt;
     exit(0);
 }

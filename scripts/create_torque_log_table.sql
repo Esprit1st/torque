@@ -16,6 +16,7 @@ PREPARE stmt FROM @query;
 EXECUTE stmt;
 #DROP TABLE IF EXISTS `raw_logs`;
 CREATE TABLE `raw_logs` (
+  `user` int(11) NOT NULL,
   `session` varchar(15) NOT NULL,
   `time` varchar(15) NOT NULL,
   `k10` float NOT NULL DEFAULT '0',

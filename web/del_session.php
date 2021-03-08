@@ -22,7 +22,7 @@ if (isset($deletesession) && !empty($deletesession)) {
     if (isset($deletefrom) && !empty($deletefrom) && isset($deleteto) && !empty($deleteto)) $range = " AND time >= " . quote_value($deletefrom) . " AND time <= " . quote_value($deleteto);
 	else {
 		$range = "";
-		$delresult = mysqli_query($con, "DELETE FROM $db_sessions_table WHERE session=" . quote_value($deletesession) . " AND torque_eml=" . $_SESSION["torque_eml"] ) or die(mysqli_error($con));
+		$delresult = mysqli_query($con, "DELETE FROM $db_sessions_table WHERE session=" . quote_value($deletesession) . " AND eml=" . quote_value($_SESSION["torque_eml"]) ) or die(mysqli_error($con));
 	}
 	$delresult = mysqli_query($con, "DELETE FROM $db_table_full WHERE session=".quote_value($deletesession).$range) or die(mysqli_error($con));
 }
