@@ -79,6 +79,7 @@ if (isset($_GET["id"]) and in_array($_GET["id"], $sids)) {
 	            $x = $row[${'v' . $i}];
 	            ${'v' . $i . '_measurand'} = ' ('.$keyarr[${'v' . $i}][1].')';
 	        }
+			if ($x == "Not Specified") $x=0; //** Set data to 0 to fix graphs that wouldn't be able to render (backwards compatible)
 	        ${'d' . $i}[] = array($row['time'], $x);
 			${'spark' . $i}[] = $x;
 			$i = $i + 1;
