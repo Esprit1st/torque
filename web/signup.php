@@ -30,12 +30,15 @@ require_once("./auth_signup.php");
         <div class="navbar-header">
           <a class="navbar-brand" href="session.php">Open Torque Viewer</a>
         </div>
-        <div id="map-container" class="col-md-7 col-xs-12">&nbsp;</div>
+        <div id="map-container" class="col-md-7 col-xs-12"></div>
         <div id="right-container" class="col-md-5 col-xs-12">
-          <div id="right-cell">
+		  <div id="right-cell">
             <?php
 				if ($_SESSION['torque_logged_in']) echo "<h4>Account</h4>";
 				else echo "<h4>Signup</h4>";
+				if ($signed_up==true) echo "<br />Signup complete. Please check your email and activate your account.";
+				else if ($data_saved==true) echo "<br />Data saved.<br /><a href=\"session.php\">Continue</a>";
+				else {
 			?>
             <div class="row center-block" style="padding-bottom:4px;">
               <form method="post" class="form-horizontal" role="form" action="signup.php" id="formsignup" onChange="javascript:validate()">
@@ -63,7 +66,7 @@ require_once("./auth_signup.php");
 				<br /><div class="form-group"><input class="form-control btn-primary" type="submit" id="formlogin" name="Submit" value="Submit" /></div>
               </form>
             </div>
-			<?php echo $debug ?>
+				<?php } echo $debug ?>
           </div>
         </div>
       </div>

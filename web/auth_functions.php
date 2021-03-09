@@ -101,13 +101,14 @@ function auth_user()
 function auth_db_user($user, $pass) {
 	//** check if login is correct
 	global $db_users_table, $con;
-	$userqry = mysqli_query($con, "SELECT id, username, password, torque_eml FROM $db_users_table WHERE username=" . quote_value($user) . " AND active<>'0'") or die(mysqli_error($con));
+	$userqry = mysqli_query($con, "SELECT id, username, password, email, torque_eml FROM $db_users_table WHERE username=" . quote_value($user) . " AND active<>'0'") or die(mysqli_error($con));
 	if (mysqli_num_rows($userqry) != 1) return false;
 	else {
 		$row = mysqli_fetch_assoc($userqry);
 		//$user, $pass, $row["username"], $row["password"]
 		if (password_verify($pass, $row["password"])) {
 			$_SESSION['torque_eml'] = $row["torque_eml"];
+			$_SESSION['torque_useremail'] = $row["email"];
 			return $row["id"];
 		}
 		else return false;

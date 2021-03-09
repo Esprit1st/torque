@@ -76,7 +76,7 @@ if (!$logged_in) {
     <div class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
       <div class="container">
         <div class="navbar-header">
-          <a class="navbar-brand" href="auth_user.php">Open Torque Viewer</a>
+          <a class="navbar-brand" href="session.php">Open Torque Viewer</a>
         </div>
         <div id="map-container" class="col-md-7 col-xs-12">&nbsp;</div>
         <div id="right-container" class="col-md-5 col-xs-12">
