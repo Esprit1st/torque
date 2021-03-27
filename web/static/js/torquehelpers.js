@@ -88,6 +88,14 @@ function placemarker(marker) {
 	markericon.getSource().getFeatures()[0].getGeometry().setCoordinates(coordinates[marker]);
 }
 
+function graphonly(e, vars) {
+	if ($('#graphonly').is(':checked')) {
+		event.preventDefault();
+		this.document.location.href = e + "&plotvars=" + vars;
+		//alert( e + "&plotvars=" + vars );
+	}
+}
+
 // form validation
 var showErrorSuccess = function(element, status) {
   if (status === false) {

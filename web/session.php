@@ -119,6 +119,14 @@ if (isset($sids[0])) {
   $setZoomManually = 1;
 }
 
+//** graph variables for export
+$i=1;
+while ( isset(${'var'.$i}) && !empty(${'var'.$i}) ) {
+	$plotvariables[]=${'var'.$i};
+	$i+=1;
+}
+$plotvariables=implode(",", $plotvariables);
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -469,11 +477,12 @@ if (isset($sids[0])) {
 
 <!-- Export Data Block -->
         <h4>Export Data</h4>
+		<small><input id="graphonly" type="checkbox" /> (Graph data only)</small>
         <div class="row center-block" style="padding-bottom:18px;">
 <?php if ($setZoomManually === 0) { ?>
           <div id="export" class="btn-group btn-group-justified">
-            <a class="btn btn-default" role="button" href="<?php echo './export.php?sid='.$session_id.'&filetype=csv'; ?>">CSV</a>
-            <a class="btn btn-default" role="button" href="<?php echo './export.php?sid='.$session_id.'&filetype=json'; ?>">JSON</a>
+            <a class="btn btn-default" role="button" href="<?php echo './export.php?sid='.$session_id.'&filetype=csv'; ?>" onClick="javascript:graphonly(this, <?php echo"'$plotvariables'"; ?>);">CSV</a>
+            <a class="btn btn-default" role="button" href="<?php echo './export.php?sid='.$session_id.'&filetype=json'; ?>" onClick="javascript:graphonly(this, <?php echo"'$plotvariables'"; ?>);">JSON</a>
           </div>
 <?php } else { ?>
           <div align="center" style="padding-top:10px;">
