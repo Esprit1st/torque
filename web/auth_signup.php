@@ -61,7 +61,7 @@ if (!$_SESSION['torque_logged_in'] && $_POST["Submit"]=="Submit") {
 	//** Throw error if email not valid or taken
 	if ( !validemail($_POST["email"]) || !availableemail($_POST["email"]) ) { $error["email"] = true; }
 	//** Throw error if torque-eml not valid
-	if ( !empty($_POST["torque_eml"]) && !validtorqueeml($_POST["torque_eml"]) ) { $error["torque_eml"] = true; }
+	if ( !empty($_POST["torque_eml"]) && !validtorqueeml($_POST["torque_eml"]) || !availabletorqueeml($_POST["torque_eml"]) ) { $error["torque_eml"] = true; }
 	
 	$user=$_POST["user"];
 	$pass=$_POST["pass"];
@@ -102,7 +102,7 @@ if ($_SESSION['torque_logged_in']) {
 		//** Throw error if email not valid or taken
 		if ( !validemail($_POST["email"]) || !availableemail($_POST["email"]) ) { $error["email"] = true; }
 		//** Throw error if torque-eml not valid
-		if ( !empty($_POST["torque_eml"]) && !validtorqueeml($_POST["torque_eml"]) ) { $error["torque_eml"] = true; }
+		if ( !empty($_POST["torque_eml"]) && !validtorqueeml($_POST["torque_eml"]) || !availabletorqueeml($_POST["torque_eml"]) ) { $error["torque_eml"] = true; }
 		//** update userdata to database
 		if (!$error ) {
 			//** If Password is set, generate hash and save to DB
@@ -167,6 +167,17 @@ function availableemail($var) {
 	//** check if email is taken
 	global $db_users_table, $con;
 	$userqry = mysqli_query($con, "SELECT id FROM $db_users_table WHERE email=" . quote_value($var) ) or die(mysqli_error($con));
+	if ( mysqli_num_rows($userqry) > 0 ) {
+		$row = mysqli_fetch_assoc($userqry);
+		if ( $row["id"] != $_SESSION["torque_userid"] ) return false;
+	}
+	return true;
+}
+
+function availabletorqueeml($var) {
+	//** check if torque_eml is taken
+	global $db_users_table, $con;
+	$userqry = mysqli_query($con, "SELECT id FROM $db_users_table WHERE torque_eml=" . quote_value($var) ) or die(mysqli_error($con));
 	if ( mysqli_num_rows($userqry) > 0 ) {
 		$row = mysqli_fetch_assoc($userqry);
 		if ( $row["id"] != $_SESSION["torque_userid"] ) return false;
