@@ -4,6 +4,12 @@ require_once("./auth_user.php");
 
 
 if (isset($_GET["sid"])) {
+	
+	$sql = mysqli_query($con, "SELECT id, description FROM torque_keys") or die(mysqli_error($con));
+	while ($row = mysqli_fetch_array($sql)) {
+		$keyiddesc[$row["id"]] = $row["description"];
+	}
+	
     $session_id = $_GET['sid'];
     // Get data for session
     $output = "";
@@ -21,13 +27,13 @@ if (isset($_GET["sid"])) {
 	if (isset($_GET["from"]) && isset($_GET["to"])) {
 		// if a selection on the graph has been made, only export that selection
 		//**$sql = mysqli_query($con, "SELECT * FROM $db_table_full join $db_sessions_table on $db_table_full.session = $db_sessions_table.session WHERE $db_table_full.session=".quote_value($session_id)." AND $db_table_full.time > ".quote_value($_GET['from'])." AND $db_table_full.time < ".quote_value($_GET['to'])." ORDER BY $db_table_full.time DESC;") or die(mysqli_error($con));
-		$sql = mysqli_query($con, "SELECT $selector FROM $db_table_full WHERE session=".quote_value($session_id)." AND time > ".quote_value($_GET['from'])." AND time < ".quote_value($_GET['to'])." ORDER BY time DESC;") or die(mysqli_error($con));
+		$sql = mysqli_query($con, "SELECT $selector FROM $db_table_full WHERE session=".quote_value($session_id)." AND time > ".quote_value($_GET['from'])." AND time < ".quote_value($_GET['to'])." ORDER BY time ASC;") or die(mysqli_error($con));
     }
 	else {
 		// export full session
 		$replacesql=array("`session`","`time`");
 		$replacewithsql=array("$db_table_full.`session`","$db_table_full.`time`");
-		$sqlquery="SELECT $selector FROM $db_table_full join $db_sessions_table on $db_table_full.session = $db_sessions_table.session WHERE $db_table_full.session=".quote_value($session_id)." ORDER BY $db_table_full.time DESC;";
+		$sqlquery="SELECT $selector FROM $db_table_full join $db_sessions_table on $db_table_full.session = $db_sessions_table.session WHERE $db_table_full.session=".quote_value($session_id)." ORDER BY $db_table_full.time ASC;";
 		$sqlquery=str_replace(array("`session`","`time`"), array("$db_table_full.`session`","$db_table_full.`time`"), $sqlquery);
 		$sql = mysqli_query($con, $sqlquery) or die(mysqli_error($con));
     }
@@ -38,7 +44,8 @@ if (isset($_GET["sid"])) {
         // Get The Field Name
 		$counter = 0;
         while ($property = mysqli_fetch_field_direct($sql, $counter)) {
-            $output .='"'.$property->name.'",';
+            if ($keyiddesc[$property->name]) $output .='"'.$keyiddesc[$property->name].'",';
+			else $output .='"'.$property->name.'",';
             $counter++;
         }
         $output .="\n";
@@ -58,10 +65,10 @@ if (isset($_GET["sid"])) {
 
         // Download the file
         $csvfilename = "torque_session_".$session_id.".csv";
-//        header('Content-type: application/csv');
-//        header('Content-Disposition: attachment; filename='.$csvfilename);
+        header('Content-type: application/csv');
+        header('Content-Disposition: attachment; filename='.$csvfilename);
 
-        echo $output."</pre>";
+        echo $output;
         exit;
     }
     else if ($_GET["filetype"] == "json") {
