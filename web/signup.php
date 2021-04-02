@@ -56,10 +56,11 @@ require_once("./auth_signup.php");
 	if ($_SESSION['torque_logged_in']) {
 ?>
 				<?php
-				if ($error["torque_eml"]==false) { ?><div class="form-group"><label class="control-label" for="torque_eml">Torque-eml</label><input class="form-control" id="torque_eml" type="text" name="torque_eml" value="<?php echo $torque_eml; ?>" placeholder="(Torque eml)" /></div><small id="emailHelp" class="text-danger hidden">Torque-eml invalid.</small></div><?php }
-				else { ?><div class="form-group has-error"><label class="control-label" for="torque_eml">Torque-eml</label><input class="form-control" id="torque_eml" type="text" name="torque_eml" value="<?php echo $torque_eml; ?>" placeholder="(Torque eml)" /><small id="emailHelp" class="text-danger">Torque-eml invalid.</small></div><?php }
+				if ($error["torque_eml"]==false) { ?><div class="form-group"><label class="control-label" for="torque_eml">Torque-eml (obtain from ABRP)</label><input class="form-control" id="torque_eml" type="text" name="torque_eml" value="<?php echo $torque_eml; ?>" placeholder="(Torque eml)" /></div><small id="emailHelp" class="text-danger hidden">Torque-eml invalid.</small></div><?php }
+				else { ?><div class="form-group has-error"><label class="control-label" for="torque_eml">Torque-eml (obtain from ABRP)</label><input class="form-control" id="torque_eml" type="text" name="torque_eml" value="<?php echo $torque_eml; ?>" placeholder="(Torque eml)" /><small id="emailHelp" class="text-danger">Torque-eml invalid.</small></div><?php }
 				?>
 				<div class="form-group"><label class="control-label" for="abrp">ABRP forward URL</label><input class="form-control" id="abrp" type="text" name="abrp" value="<?php echo $abrp; ?>" placeholder="(ABRP forward URL)" /></div>
+				<div class="form-group">Upload-URL for Torque-pro:<br /><?php echo $t_upload_url ?></div>
 <?php
 	}
 ?>

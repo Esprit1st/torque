@@ -40,5 +40,8 @@ $min_session_size = 20;
 #ABRP forwarding active
 $use_abrp = true;
 
+# Torque upload URL
+$t_upload_url = "";
+
 //echo "<!-- End creds.php -->\r\n";
 ?>
