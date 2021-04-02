@@ -26,11 +26,11 @@ require_once("./auth_signup.php");
   </head>
   <body>
     <div class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
-      <div class="container">
         <div class="navbar-header">
           <a class="navbar-brand" href="session.php">Open Torque Viewer</a>
         </div>
-        <div id="map-container" class="col-md-7 col-xs-12"></div>
+	</div>
+      <div class="container">
         <div id="right-container" class="col-md-5 col-xs-12">
 		  <div id="right-cell">
             <?php
@@ -71,6 +71,5 @@ require_once("./auth_signup.php");
           </div>
         </div>
       </div>
-    </div>
   </body>
 </html>
