@@ -99,12 +99,12 @@ function graphonly(e, vars) {
 // form validation
 var showErrorSuccess = function(element, status) {
   if (status === false) {
-    element.parent().addClass('has-error');
-	element.parent().find('[id*="Help"]').removeClass('hidden')
+    element.parent().addClass('is-invalid').removeClass('is-valid');
+	element.addClass('is-invalid').removeClass('is-valid');
     return false;
   }
-  element.parent().removeClass('has-error').addClass('has-success');
-  element.parent().find('[id*="Help"]').addClass('hidden')
+  element.parent().removeClass('is-invalid').addClass('is-valid');
+  element.removeClass('is-invalid').addClass('is-valid');
 };
 
 // form validation

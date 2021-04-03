@@ -134,17 +134,18 @@ $plotvariables=implode(",", $plotvariables);
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Open Torque Viewer</title>
+    <title>EV Charge Cost - Open Torque</title>
     <meta name="description" content="Open Torque Viewer">
     <meta name="author" content="Matt Nicklay">
     <meta name="author" content="Joe Gullo (surfrock66)">
-    <link rel="stylesheet" href="static/css/bootstrap.css">
+	<meta name="author" content="Ingo Nehls">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.0/chosen.min.css">
     <link rel="stylesheet" href="static/css/torque.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
     <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-    <script language="javascript" type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
     <script language="javascript" type="text/javascript" src="static/js/jquery.peity.min.js"></script>
     <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.jquery.min.js"></script>
     <!-- Include OpenStreetMap Openlayers -->
@@ -236,271 +237,289 @@ $plotvariables=implode(",", $plotvariables);
 <?php } ?>
   </head>
   <body>
-    <div class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-<?php    if ( empty($_SESSION['torque_user']) ) { ?>
-          <a class="navbar-brand" href="session.php">Open Torque Viewer</a>
-<?php    } else { ?>
-          <a class="navbar-brand" href="session.php">Open Torque Viewer</a><span class="navbar-brand" style="margin-left:25px;">{ <a href="signup.php" style="color:white;"><?php echo $_SESSION['torque_user'] ?></a> <a href="session.php?logout=true"><img width="20" heigth="20" style="margin-left:10px;margin-top:-2px;" src="./static/logout.png" /></a> }</span>
-<?php    } ?>
-        </div>
-      </div>
-    </div>
-    <div id="map-container" class="col-md-7 col-xs-12">
-      <div id="map-canvas"></div>
+	<div class="container-xxl">
+	  <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+		<a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+		  <span class="fs-4">EV-Charge-Cost Torque Viewer</span>
+		</a>
 
-    <script type="text/javascript">
-	<!-- Initialize drive path layer -->
-    var layerLines = new ol.layer.Vector({
-        source: new ol.source.Vector({
-            features: [new ol.Feature({
-                geometry: new ol.geom.LineString(coordinates),
-                name: 'Line'
-            })]
-        }),
-        style: new ol.style.Style({
-            stroke: new ol.style.Stroke({
-                color: '#ff0000',
-                width: 3
-            })
-        })
-    });
+		<ul class="nav nav-pills">
+		  <li class="nav-item"><a href="session.php" class="nav-link active">Home</a></li>
+		  <?php    if ( $_SESSION['torque_user'] ) { ?>
+			<li class="nav-item"><a href="signup.php" class="nav-link"><?php echo $_SESSION['torque_user'] ?></a></li>
+			<li class="nav-item"><a href="session.php?logout=true" class="nav-link">Logout</a></li>
+		  <?php    } ?>
+		</ul>
+	  </header>
+	</div>
+	<div class="container-xxl h-100">
+		<div class="row h-100">
+			<!-- left column with map -->
+			<div class="col-7" id="map-container">
+				<div id="map-canvas"></div>
+				<script type="text/javascript">
+				<!-- Initialize drive path layer -->
+				var layerLines = new ol.layer.Vector({
+					source: new ol.source.Vector({
+						features: [new ol.Feature({
+							geometry: new ol.geom.LineString(coordinates),
+							name: 'Line'
+						})]
+					}),
+					style: new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: '#ff0000',
+							width: 3
+						})
+					})
+				});
 
-	<!-- Initialize map -->
-    var map = new ol.Map({
-        target: 'map-canvas',
-        layers: [
-            new ol.layer.Tile({
-                source: new ol.source.OSM()
-            })
-        ],
-        view: view
-    });
+				<!-- Initialize map -->
+				var map = new ol.Map({
+					target: 'map-canvas',
+					layers: [
+						new ol.layer.Tile({
+							source: new ol.source.OSM()
+						})
+					],
+					view: view
+				});
 
-	<!-- Initialize marker to start of log -->
-	var markericon = new ol.layer.Vector({
-		source: new ol.source.Vector({
-			features: [
-				new ol.Feature({
-					geometry: new ol.geom.Point(coordinates[coordinates.length-1])
-				})
-			]
-		})
-	});
-	map.addLayer(markericon);
+				<!-- Initialize marker to start of log -->
+				var markericon = new ol.layer.Vector({
+					source: new ol.source.Vector({
+						features: [
+							new ol.Feature({
+								geometry: new ol.geom.Point(coordinates[coordinates.length-1])
+							})
+						]
+					})
+				});
+				map.addLayer(markericon);
 
-	<!-- Add drive path layer -->
-    map.addLayer(layerLines);
-	
-	<!-- Center view on drive path -->
-    var view = new ol.View({});
-	var extent = layerLines.getSource().getExtent();
-	map.getView().fit(extent, {padding: [50, 50, 50, 50]});
-    </script>
+				<!-- Add drive path layer -->
+				map.addLayer(layerLines);
+				
+				<!-- Center view on drive path -->
+				var view = new ol.View({});
+				var extent = layerLines.getSource().getExtent();
+				map.getView().fit(extent, {padding: [50, 50, 50, 50]});
+				</script>
+			</div>
+			
+			<!-- right column with controls -->
+			<div id="right-container" class="col-5">
+			
+			
+			
+				<div id="right-cell">
+					<h5>Select Session</h5>
+					<div class="row center-block" style="padding-bottom:4px;">
+					  <!-- Filter the session list by year and month -->
+					  Filter Sessions (Default date filter is current year/month)
+					  <form method="post" class="form-horizontal" role="form" action="url.php?id=<?php echo $session_id; ?>">
+						<table width="100%">
+						  <tr>
+							<!-- Profile Filter -->
+							<td width="34%">
+							  <select id="selprofile" name="selprofile" class="form-control chosen-select btn-sm" data-placeholder="Select Profile">
+								<option value=""></option>
+								<option value="ALL"<?php if ($filterprofile == "ALL") echo ' selected'; ?>>Any Profile</option>
+			<?php $i = 0; ?>
+			<?php while(isset($profilearray[$i])) { ?>
+								<option value="<?php echo $profilearray[$i]; ?>"<?php if ($filterprofile == $profilearray[$i]) echo ' selected'; ?>><?php echo $profilearray[$i]; ?></option>
+			<?php   $i = $i + 1; ?>
+			<?php } ?>
+							  </select>
+							</td>
+							<td width="2%"></td>
 
-    </div>
-    <div id="right-container" class="col-md-5 col-xs-12">
-      <div id="right-cell">
-        <h4>Select Session</h4>
-        <div class="row center-block" style="padding-bottom:4px;">
-          <!-- Filter the session list by year and month -->
-          <h5>Filter Sessions (Default date filter is current year/month)</h5>
-          <form method="post" class="form-horizontal" role="form" action="url.php?id=<?php echo $session_id; ?>">
-            <table width="100%">
-              <tr>
-                <!-- Profile Filter -->
-                <td width="34%">
-                  <select id="selprofile" name="selprofile" class="form-control chosen-select" data-placeholder="Select Profile">
-                    <option value=""></option>
-                    <option value="ALL"<?php if ($filterprofile == "ALL") echo ' selected'; ?>>Any Profile</option>
-<?php $i = 0; ?>
-<?php while(isset($profilearray[$i])) { ?>
-                    <option value="<?php echo $profilearray[$i]; ?>"<?php if ($filterprofile == $profilearray[$i]) echo ' selected'; ?>><?php echo $profilearray[$i]; ?></option>
-<?php   $i = $i + 1; ?>
-<?php } ?>
-                  </select>
-                </td>
-                <td width="2%"></td>
+							<!-- Year Month Filter -->
+							<td width="34%">
+							  <select id="selyearmonth" name="selyearmonth" class="form-control chosen-select btn-sm" data-placeholder="Select Year/Month">
+								<option value=""></option>
+			<?php $i = 0; ?>
+			<?php while(isset($yearmonthsuffixarray[$i])) { ?>
+								<option value="<?php echo $yearmonthsuffixarray[$i]; ?>"<?php if ($filteryearmonth == $yearmonthsuffixarray[$i]) { echo ' selected'; } else if ($i == 0) { echo 'selected'; } ?>><?php echo $yearmonthdescarray[$i]; ?></option>
+			<?php   $i = $i + 1; ?>
+			<?php } ?>
+							  </select>
+							</td>
 
-                <!-- Year Month Filter -->
-                <td width="34%">
-                  <select id="selyearmonth" name="selyearmonth" class="form-control chosen-select" data-placeholder="Select Year/Month">
-                    <option value=""></option>
-<?php $i = 0; ?>
-<?php while(isset($yearmonthsuffixarray[$i])) { ?>
-                    <option value="<?php echo $yearmonthsuffixarray[$i]; ?>"<?php if ($filteryearmonth == $yearmonthsuffixarray[$i]) { echo ' selected'; } else if ($i == 0) { echo 'selected'; } ?>><?php echo $yearmonthdescarray[$i]; ?></option>
-<?php   $i = $i + 1; ?>
-<?php } ?>
-                  </select>
-                </td>
+							<td width="13%">
+							  <div align="center" style="padding-top:2px;"><input class="btn btn-primary btn-sm" type="submit" id="formfilterdates" name="filterdates" value="Filter Sessions"></div>
+							</td>
+						  </tr>
+						</table>
+						<noscript><input type="submit" id="datefilter" name="datefilter" class="input-sm"></noscript>
+					  </form><br />
+					  <!-- Session Select Drop-Down List -->
+					  <form method="post" class="form-horizontal" role="form" action="url.php">
+						<select id="seshidtag" name="seshidtag" class="form-control chosen-select" onchange="this.form.submit()" data-placeholder="Select Session..." style="width:100%;">
+						  <option value=""></option>
+			<?php foreach ($seshdates as $dateid => $datestr) { ?>
+						  <option value="<?php echo $dateid; ?>"<?php if ($dateid == $session_id) echo ' selected'; ?>><?php echo $datestr; echo $seshprofile[$dateid]; if ($show_session_length) {echo $seshsizes[$dateid];} ?><?php if ($dateid == $session_id) echo ' (Current Session)'; ?></option>
+			<?php } ?>
+						</select>
+			<?php   if ( $filteryearmonth <> "" ) { ?>
+						<input type="hidden" name="selyearmonth" id="selyearmonth" value="<?php echo $filteryearmonth; ?>" />
+			<?php   } ?>
+						<noscript><input type="submit" id="seshidtag" name="seshidtag" class="input-sm"></noscript>
+					  </form>
+			<?php if(isset($session_id) && !empty($session_id)){ ?>
+					  <div class="btn-group btn-group-justified">
+						<table style="width:100%">
+						  <tr>
+							<td>
+							  <form method="post" class="form-horizontal" role="form" action="merge_sessions.php?mergesession=<?php echo $session_id; ?>" id="formmerge">
+								<div align="center" style="padding-top:6px;"><input class="btn btn-primary btn-sm" type="submit" id="formmerge" name="merge" value="Merge..." title="Merge this session (<?php echo $seshdates[$session_id]; ?>) with the other sessions." /></div>
+							  </form>
+							</td>
+							<td>
+							  <form method="post" class="form-horizontal" role="form" action="session.php?deletesession=<?php echo $session_id; ?>" id="formdelete">
+								<div align="center" style="padding-top:6px;"><input class="btn btn-primary btn-sm" type="submit" id="formdelete" name="delete" value="Delete" title="Delete this session or selected range (<?php echo $seshdates[$session_id]; ?>)." /></div>
+							  </form>
+							</td>
+							<script type="text/javascript">
+							  $('#formdelete').submit(function() {
+								var c = confirm("Click OK to delete session or selected range (<?php echo $seshdates[$session_id]; ?>).");
+								return c; //you can just return c because it will be true or false
+							  });
+							</script>
+						  </tr>
+						</table>
+					  </div>
+			<?php } ?>
+					</div><br />
 
-                <td width="13%">
-                  <div align="center" style="padding-top:2px;"><input class="btn btn-info btn-sm" type="submit" id="formfilterdates" name="filterdates" value="Filter Sessions"></div>
-                </td>
-              </tr>
-            </table>
-            <noscript><input type="submit" id="datefilter" name="datefilter" class="input-sm"></noscript>
-          </form><br />
-          <!-- Session Select Drop-Down List -->
-          <form method="post" class="form-horizontal" role="form" action="url.php">
-            <select id="seshidtag" name="seshidtag" class="form-control chosen-select" onchange="this.form.submit()" data-placeholder="Select Session..." style="width:100%;">
-              <option value=""></option>
-<?php foreach ($seshdates as $dateid => $datestr) { ?>
-              <option value="<?php echo $dateid; ?>"<?php if ($dateid == $session_id) echo ' selected'; ?>><?php echo $datestr; echo $seshprofile[$dateid]; if ($show_session_length) {echo $seshsizes[$dateid];} ?><?php if ($dateid == $session_id) echo ' (Current Session)'; ?></option>
-<?php } ?>
-            </select>
-<?php   if ( $filteryearmonth <> "" ) { ?>
-            <input type="hidden" name="selyearmonth" id="selyearmonth" value="<?php echo $filteryearmonth; ?>" />
-<?php   } ?>
-            <noscript><input type="submit" id="seshidtag" name="seshidtag" class="input-sm"></noscript>
-          </form>
-<?php if(isset($session_id) && !empty($session_id)){ ?>
-          <div class="btn-group btn-group-justified">
-            <table style="width:100%">
-              <tr>
-                <td>
-                  <form method="post" class="form-horizontal" role="form" action="merge_sessions.php?mergesession=<?php echo $session_id; ?>" id="formmerge">
-                    <div align="center" style="padding-top:6px;"><input class="btn btn-info btn-sm" type="submit" id="formmerge" name="merge" value="Merge..." title="Merge this session (<?php echo $seshdates[$session_id]; ?>) with the other sessions." /></div>
-                  </form>
-                </td>
-                <td>
-                  <form method="post" class="form-horizontal" role="form" action="session.php?deletesession=<?php echo $session_id; ?>" id="formdelete">
-                    <div align="center" style="padding-top:6px;"><input class="btn btn-info btn-sm" type="submit" id="formdelete" name="delete" value="Delete" title="Delete this session or selected range (<?php echo $seshdates[$session_id]; ?>)." /></div>
-                  </form>
-                </td>
-                <script type="text/javascript">
-                  $('#formdelete').submit(function() {
-                    var c = confirm("Click OK to delete session or selected range (<?php echo $seshdates[$session_id]; ?>).");
-                    return c; //you can just return c because it will be true or false
-                  });
-                </script>
-              </tr>
-            </table>
-          </div>
-<?php } ?>
-        </div><br />
+			<!-- Variable Select Block -->
+			<?php if ($setZoomManually === 0) { ?>
+					<h5>Select Variables to Compare</h5>
+					<div class="row center-block" style="padding-top:3px;">
+						<form method="post" role="form" action="url.php?makechart=y&seshid=<?php echo $session_id; ?>" id="formplotdata">
+						  <select data-placeholder="Choose OBD2 data..." multiple class="chosen-select" size="<?php echo $numcols; ?>" style="width:100%;" id="plot_data" onsubmit="onSubmitIt" name="plotdata[]">
+							<option value=""></option>
+			<?php   foreach ($coldata as $xcol) { ?>
+							<option value="<?php echo $xcol['colname']; ?>" <?php $i = 1; while ( isset(${'var' . $i}) ) { if ( (${'var' . $i} == $xcol['colname'] ) OR ( $xcol['colfavorite'] == 1 ) ) { echo " selected"; } $i = $i + 1; } ?>><?php echo $xcol['colcomment']; ?></option>
+			<?php   } ?>
+						</select>
+			<?php   if ( $filteryearmonth <> "" ) { ?>
+						<input type="hidden" name="selyearmonth" id="selyearmonth" value="<?php echo $filteryearmonth; ?>" />
+			<?php   } ?>
+						<div align="center" style="padding-top:6px;"><input class="btn btn-primary btn-sm" type="submit" id="formplotdata" name="plotdata[]" value="Plot!"></div>
+					  </form>
+					</div>
+			<?php } else { ?>
 
-<!-- Variable Select Block -->
-<?php if ($setZoomManually === 0) { ?>
-        <h4>Select Variables to Compare</h4>
-          <div class="row center-block" style="padding-top:3px;">
-            <form method="post" role="form" action="url.php?makechart=y&seshid=<?php echo $session_id; ?>" id="formplotdata">
-              <select data-placeholder="Choose OBD2 data..." multiple class="chosen-select" size="<?php echo $numcols; ?>" style="width:100%;" id="plot_data" onsubmit="onSubmitIt" name="plotdata[]">
-                <option value=""></option>
-<?php   foreach ($coldata as $xcol) { ?>
-                <option value="<?php echo $xcol['colname']; ?>" <?php $i = 1; while ( isset(${'var' . $i}) ) { if ( (${'var' . $i} == $xcol['colname'] ) OR ( $xcol['colfavorite'] == 1 ) ) { echo " selected"; } $i = $i + 1; } ?>><?php echo $xcol['colcomment']; ?></option>
-<?php   } ?>
-            </select>
-<?php   if ( $filteryearmonth <> "" ) { ?>
-            <input type="hidden" name="selyearmonth" id="selyearmonth" value="<?php echo $filteryearmonth; ?>" />
-<?php   } ?>
-            <div align="center" style="padding-top:6px;"><input class="btn btn-info btn-sm" type="submit" id="formplotdata" name="plotdata[]" value="Plot!"></div>
-          </form>
-        </div>
-<?php } else { ?>
+			<!-- Plot Block -->
+					<h5>Plot</h5>
+					<div align="center" class="badge bg-warning" style="">
+						Select a session first!
+					  </div><br />
+			<?php } ?>
 
-<!-- Plot Block -->
-        <h4>Plot</h4>
-        <div align="center" style="padding-top:10px;">
-          <h5><span class="label label-warning">Select a session first!</span></h5>
-        </div><br />
-<?php } ?>
+			<!-- Chart Block -->
+					<h5>Chart</h5>
+					<div class="row center-block" style="padding-bottom:5px;">
+			<?php if ($setZoomManually === 0) { ?>
+					  <!-- 2015.07.22 - edit by surfrock66 - Don't display anything if no variables are set (default) -->
+			<?php   if ( $var1 == "" ) { ?>
+					  <div align="center" class="badge bg-warning" style="">
+						No Variables Selected to Plot!
+					  </div>
+			<?php   } else { ?>
+					  <div class="demo-container">
+						<div id="placeholder" class="demo-placeholder" style="height:300px;"></div>
+					  </div>
+			<?php   } ?>
+			<?php } else { ?>
+					  <div align="center" class="badge bg-warning" style="">
+						Select a session first!
+					  </div>
+			<?php } ?>
+					</div><br />
 
-<!-- Chart Block -->
-        <h4>Chart</h4>
-        <div class="row center-block" style="padding-bottom:5px;">
-<?php if ($setZoomManually === 0) { ?>
-          <!-- 2015.07.22 - edit by surfrock66 - Don't display anything if no variables are set (default) -->
-<?php   if ( $var1 == "" ) { ?>
-          <div align="center" style="padding-top:10px;">
-            <h5><span class="label label-warning">No Variables Selected to Plot!</span></h5>
-          </div>
-<?php   } else { ?>
-          <div class="demo-container">
-            <div id="placeholder" class="demo-placeholder" style="height:300px;"></div>
-          </div>
-<?php   } ?>
-<?php } else { ?>
-          <div align="center" style="padding-top:10px;">
-            <h5><span class="label label-warning">Select a session first!</span></h5>
-          </div>
-<?php } ?>
-        </div><br />
+			<!-- Data Summary Block -->
+					<h5>Data Summary</h5>
+					<div class="row center-block">
+			<?php if ($setZoomManually === 0) { ?>
+					  <!-- 2015.07.22 - edit by surfrock66 - Don't display anything if no variables are set (default) -->
+			<?php   if ( $var1 <> "" ) { ?>
+					  <div class="table-responsive">
+						<table class="table">
+						  <thead>
+							<tr>
+							  <th>Name</th>
+							  <th>Min/Max</th>
+							  <th>25th Pcnt</th>
+							  <th>75th Pcnt</th>
+							  <th>Mean</th>
+							  <th>Sparkline</th>
+							</tr>
+						  </thead>
+						  <!-- 2015.08.05 - Edit by surfrock66 - Code to plot unlimited variables -->
+						  <tbody>
+			<?php     $i=1; ?>
+			<?php     while ( isset(${'var' . $i }) ) { ?>
+							<tr>
+							  <th><?php echo substr(${'v' . $i . '_label'}, 1, -1); ?></td>
+							  <td><?php echo ${'min' . $i}.'/'.${'max' . $i}; ?></td>
+							  <td><?php echo ${'pcnt25data' . $i}; ?></td>
+							  <td><?php echo ${'pcnt75data' . $i}; ?></td>
+							  <td><?php echo ${'avg' . $i}; ?></td>
+							  <td><span class="line"><?php echo ${'sparkdata' . $i}; ?></span></td>
+							</tr>
+			<?php       $i = $i + 1; ?>
+			<?php     } ?>
+						  </tbody>
+						</table>
+					  </div>
+			<?php   } else { ?>
+					  <div align="center" class="badge bg-warning" style="">
+						No Variables Selected to Plot!
+					  </div>
+			<?php   } ?>
+			<?php } else { ?>
+					  <div align="center" class="badge bg-warning" style="">
+						Select a session first!
+					  </div>
+			<?php } ?>
+					</div><br />
 
-<!-- Data Summary Block -->
-        <h4>Data Summary</h4>
-        <div class="row center-block">
-<?php if ($setZoomManually === 0) { ?>
-          <!-- 2015.07.22 - edit by surfrock66 - Don't display anything if no variables are set (default) -->
-<?php   if ( $var1 <> "" ) { ?>
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Min/Max</th>
-                  <th>25th Pcnt</th>
-                  <th>75th Pcnt</th>
-                  <th>Mean</th>
-                  <th>Sparkline</th>
-                </tr>
-              </thead>
-              <!-- 2015.08.05 - Edit by surfrock66 - Code to plot unlimited variables -->
-              <tbody>
-<?php     $i=1; ?>
-<?php     while ( isset(${'var' . $i }) ) { ?>
-                <tr>
-                  <td><strong><?php echo substr(${'v' . $i . '_label'}, 1, -1); ?></strong></td>
-                  <td><?php echo ${'min' . $i}.'/'.${'max' . $i}; ?></td>
-                  <td><?php echo ${'pcnt25data' . $i}; ?></td>
-                  <td><?php echo ${'pcnt75data' . $i}; ?></td>
-                  <td><?php echo ${'avg' . $i}; ?></td>
-                  <td><span class="line"><?php echo ${'sparkdata' . $i}; ?></span></td>
-                </tr>
-<?php       $i = $i + 1; ?>
-<?php     } ?>
-              </tbody>
-            </table>
-          </div>
-<?php   } else { ?>
-          <div align="center" style="padding-top:10px;">
-            <h5><span class="label label-warning">No Variables Selected to Plot!</span></h5>
-          </div>
-<?php   } ?>
-<?php } else { ?>
-          <div align="center" style="padding-top:5px;">
-            <h5><span class="label label-warning">Select a session first!</span></h5>
-          </div>
-<?php } ?>
-        </div><br />
+			<!-- Export Data Block -->
+					<h5>Export Data</h5>
+					<?php if ($plotvariables) { ?><small><input id="graphonly" type="checkbox" /> (Graph data only)</small><?php } ?>
+					<div class="row center-block" style="padding-bottom:18px;">
+			<?php if ($setZoomManually === 0) { ?>
+					  <div id="export" class="btn-group">
+						<a class="btn btn-secondary" role="button" href="<?php echo './export.php?sid='.$session_id.'&filetype=csv'; ?>" onClick="javascript:graphonly(this, <?php echo"'$plotvariables'"; ?>);">CSV</a>&nbsp;
+						<a class="btn btn-secondary" role="button" href="<?php echo './export.php?sid='.$session_id.'&filetype=json'; ?>" onClick="javascript:graphonly(this, <?php echo"'$plotvariables'"; ?>);">JSON</a>
+					  </div>
+			<?php } else { ?>
+					  <div align="center" class="badge bg-warning" style="">
+						Select a session first!
+					  </div>
+			<?php } ?>
+					</div>
+					<div class="row center-block" style="padding-bottom:18px;text-align:center;">
+					  <a href="./pid_edit.php" title="Edit PIDs">Edit PIDs</a><br />
+					  <a href="https://github.com/Esprit1st/torque" title="View Source On Github">View Source On Github</a>
+					  <p style="font-size:10px;margin-top:20px;" >
+						Render Start: <?php echo $loadstart; ?>; Render End: <?php $loadend = date("h:i:s A", microtime(true)); echo $loadend; ?><br />
+						Load Time: <?php $loadmicroend = explode(' ', microtime()); $loadmicroend = $loadmicroend[1] + $loadmicroend[0]; echo $loadmicroend-$loadmicrostart; ?> seconds<br />
+						Session ID: <?php echo $session_id; ?>
+					  </p>
+					</div>
+				</div>
+			</div>
 
-<!-- Export Data Block -->
-        <h4>Export Data</h4>
-		<small><input id="graphonly" type="checkbox" /> (Graph data only)</small>
-        <div class="row center-block" style="padding-bottom:18px;">
-<?php if ($setZoomManually === 0) { ?>
-          <div id="export" class="btn-group btn-group-justified">
-            <a class="btn btn-default" role="button" href="<?php echo './export.php?sid='.$session_id.'&filetype=csv'; ?>" onClick="javascript:graphonly(this, <?php echo"'$plotvariables'"; ?>);">CSV</a>
-            <a class="btn btn-default" role="button" href="<?php echo './export.php?sid='.$session_id.'&filetype=json'; ?>" onClick="javascript:graphonly(this, <?php echo"'$plotvariables'"; ?>);">JSON</a>
-          </div>
-<?php } else { ?>
-          <div align="center" style="padding-top:10px;">
-            <h5><span class="label label-warning">Select a session first!</span></h5>
-          </div>
-<?php } ?>
-        </div>
-        <div class="row center-block" style="padding-bottom:18px;text-align:center;">
-          <a href="./pid_edit.php" title="Edit PIDs">Edit PIDs</a><br />
-          <a href="https://github.com/Esprit1st/torque" title="View Source On Github">View Source On Github</a>
-          <p style="font-size:10px;margin-top:20px;" >
-            Render Start: <?php echo $loadstart; ?>; Render End: <?php $loadend = date("h:i:s A", microtime(true)); echo $loadend; ?><br />
-            Load Time: <?php $loadmicroend = explode(' ', microtime()); $loadmicroend = $loadmicroend[1] + $loadmicroend[0]; echo $loadmicroend-$loadmicrostart; ?> seconds<br />
-            Session ID: <?php echo $session_id; ?>
-          </p>
-        </div>
-      </div>
-    </div>
+			
+			
+			
+			
+			
+		</div>
+	</div>
 	<script language="javascript" type="text/javascript" src="static/js/torquehelpers2.js"></script>
   </body>
 </html>
