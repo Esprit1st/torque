@@ -237,7 +237,7 @@ $plotvariables=implode(",", $plotvariables);
 <?php } ?>
   </head>
   <body>
-	<div class="container-xxl">
+	<div class="container-fluid">
 	  <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
 		<a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
 		  <span class="fs-4">EV-Charge-Cost Torque Viewer</span>
@@ -252,10 +252,10 @@ $plotvariables=implode(",", $plotvariables);
 		</ul>
 	  </header>
 	</div>
-	<div class="container-xxl h-100">
+	<div class="container-fluid h-100">
 		<div class="row h-100">
 			<!-- left column with map -->
-			<div class="col-7" id="map-container">
+			<div class="col-7 col-xxl-9" id="map-container">
 				<div id="map-canvas"></div>
 				<script type="text/javascript">
 				<!-- Initialize drive path layer -->
@@ -308,7 +308,7 @@ $plotvariables=implode(",", $plotvariables);
 			</div>
 			
 			<!-- right column with controls -->
-			<div id="right-container" class="col-5">
+			<div id="right-container" class="col-5 col-xxl-3">
 			
 			
 			
