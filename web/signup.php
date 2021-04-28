@@ -42,7 +42,8 @@ require_once("./auth_signup.php");
 	  </header>
 	</div>
     <div class="container">
-        <div id="right-container" class="col-md-5 col-xs-12">
+	<div class="row">
+        <div class="col-md-6 col-xs-12 mb-4">
 				<?php
 					if ($_SESSION['torque_logged_in']) echo "<h4>Account</h4>";
 					else echo "<h4>Signup</h4>";
@@ -50,7 +51,7 @@ require_once("./auth_signup.php");
 					else if ($data_saved==true) echo "<br />Data saved.<br /><a href=\"session.php\">Continue</a>";
 					else {
 				?>
-				<div class="row center-block" style="padding-bottom:4px;">
+				<div class="row" style="padding-bottom:4px;">
 				  <form method="post" class="form-horizontal" role="form" action="signup.php" id="formsignup" onChange="javascript:validate()">
 					<?php
 					if (!$error || $error["user"]!=2) { ?><div class="mb-3 form-group"><label class="form-label" for="username">Username</label><input class="form-control<?php if ($error["user"]==1) echo " is-invalid"; ?>" id="username" type="text" name="user" value="<?php echo $user ?>" placeholder="(Username)" title="Username"<?php if ($_SESSION['torque_logged_in']) echo " disabled"; ?> /><div id="usernameFeedback" class="invalid-feedback">Invalid Username. Must be 4-15 characters long. Can have letters, numbers, "-" and "_".</div></div><?php }
@@ -81,6 +82,97 @@ require_once("./auth_signup.php");
 					echo $debug;
 				?>
         </div>
+<?php
+	if ($_SESSION['torque_logged_in']) {
+?>
+		<div class="col-md-6 col-xs-12">
+			<h4>My Data</h4>
+			<p>We understand that your data saved here is very sensitive. So you are completely in control of your data!</p>
+			<p>You have three options to delete your data.</p>
+			<p>You can either anonymize your GPS positions in all logged data-sessions or delete all logged data. Finally you can delete your account and all associated data.</p>
+			<p>Every option further down includes the upper options. Deleting your account will also delete all your data. Deleting all your data will keep your account active.</p>
+			
+			<div class="mb-4 clearfix">
+			<h5>Reset GPS data</h5>
+			<p>Delete all my GPS lat & long data.</p>
+			<p>This will set all GPS positions associated with your user account to 0,0. All other data will stay untouched.</p>
+			<button type="button" class="btn btn-danger float-end col-12" onClick="$('#delete').attr('id','delete-gps');" data-bs-toggle="modal" data-bs-target="#delete-data">
+				Reset GPS points
+			</button>
+			</div>
+			
+			<div class="mb-4 clearfix">
+			<h5>Delete Torque data</h5>
+			<p>Delete all my Torque data.</p>
+			<p>This will delete all data sent by Torque, but your user account will stay active.</p>
+			<button type="button" class="btn btn-danger float-end col-12" onClick="$('#delete').attr('id','delete-torque');" data-bs-toggle="modal" data-bs-target="#delete-data">
+				Delete Torque Log data
+			</button>
+			</div>
+			
+			<div class="mb-4 clearfix">
+			<h5>Delete all data</h5>
+			<p>Delete everything.</p>
+			<p>This will delete all your data. All your data sent from Torque will be deleted. Also your User account will be deleted and you will be logged out.</p>
+			<button type="button" class="btn btn-danger float-end col-12" onClick="$('#delete').attr('id','delete-all');" data-bs-toggle="modal" data-bs-target="#delete-data">
+				Delete everything
+			</button>
+			</div>
+			<div class="modal fade" id="delete-data" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			  <div class="modal-dialog">
+				<div class="modal-content">
+				  <div class="modal-header bg-danger">
+					<h5 class="modal-title text-white" id="staticBackdropLabel">Warning!</h5>
+					<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+				  </div>
+				  <div class="modal-body">
+					<p>This action is non-reversable and your data will be lost.</p>
+					<p><strong>Please proceed with caution!</strong></p>
+				  </div>
+				  <div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="delete">Delete now</button>
+				  </div>
+				</div>
+			  </div>
+			</div>
+			<div class="modal fade" id="delete-complete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			  <div class="modal-dialog">
+				<div class="modal-content">
+				  <div class="modal-header bg-success">
+					<h5 class="modal-title text-white" id="staticBackdropLabel">Complete</h5>
+					<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+				  </div>
+				  <div class="modal-body">
+					<p>Your data has been deleted.</p>
+				  </div>
+				  <div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+				  </div>
+				</div>
+			  </div>
+			</div>
+			
+			<script language="javascript">
+			if ($(location).attr('href').split("?")[1] == "del") {
+				var completeModal = new bootstrap.Modal(document.getElementById("delete-complete"), {});
+				  completeModal.show();
+			}
+			$('#delete-data .modal-footer button').on('click', function(event) {
+			  var $button = $(event.target);
+
+			  $(this).closest('.modal').one('hidden.bs.modal', function() {
+				if ($button[0].id.substr(0,6) == "delete") window.location.href = "delete_data.php?d=" + $button[0].id.substr(7);
+				$('#' + $button[0].id).attr('id','delete');
+			  });
+			});
+			</script>
+
+		</div>
+<?php
+	}
+?>
     </div>
+	</div>
   </body>
 </html>

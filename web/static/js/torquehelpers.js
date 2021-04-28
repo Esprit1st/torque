@@ -84,10 +84,12 @@ $(document).ready(function(){
   $(".line").peity("line")
 });
 
+// set position marker on map to current mouseover position on the graph
 function placemarker(marker) {
 	markericon.getSource().getFeatures()[0].getGeometry().setCoordinates(coordinates[marker]);
 }
 
+// export only variables that are visible in graph
 function graphonly(e, vars) {
 	if ($('#graphonly').is(':checked')) {
 		event.preventDefault();

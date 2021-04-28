@@ -503,7 +503,7 @@ $plotvariables=implode(",", $plotvariables);
 					</div>
 					<div class="row center-block" style="padding-bottom:18px;text-align:center;">
 					  <a href="./pid_edit.php" title="Edit PIDs">Edit PIDs</a><br />
-					  <a href="https://github.com/Esprit1st/torque" title="View Source On Github">View Source On Github</a>
+					  <a href="https://github.com/Esprit1st/torque" target="_blank" title="View Source On Github">View Source On Github</a>
 					  <p style="font-size:10px;margin-top:20px;" >
 						Render Start: <?php echo $loadstart; ?>; Render End: <?php $loadend = date("h:i:s A", microtime(true)); echo $loadend; ?><br />
 						Load Time: <?php $loadmicroend = explode(' ', microtime()); $loadmicroend = $loadmicroend[1] + $loadmicroend[0]; echo $loadmicroend-$loadmicrostart; ?> seconds<br />
