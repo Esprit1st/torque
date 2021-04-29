@@ -150,11 +150,11 @@ if (sizeof($_GET) > 0) {
         }
       }
     }
-    $sqlkeyquery = "SELECT id FROM $db_keys_table WHERE id=".quote_value($key);
+    $sqlkeyquery = "SELECT id FROM $db_keys_table WHERE user=".quote_value($user)." AND id=".quote_value($key);
     $result = mysqli_query($con, $sqlkeyquery);
     $row = mysqli_fetch_assoc($result);
     if ( ! $row and $submitval == 2 ) {
-      $sqlalterkey = "INSERT INTO $db_keys_table (id, description, type, populated) VALUES (".quote_value($key).", ".quote_value($key).", 'varchar(255)', '1')";
+      $sqlalterkey = "INSERT INTO $db_keys_table (user, id, description, type, populated) VALUES (".quote_value($user).", ".quote_value($key).", ".quote_value($key).", 'varchar(255)', '1')";
 #echo "<br />Debug 23 $sqlalterkey<br />";
       mysqli_query($con, $sqlalterkey) or die(mysqli_error($con));
 #echo "<br />Debug 24<br />";

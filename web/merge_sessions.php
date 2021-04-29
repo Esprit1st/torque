@@ -30,7 +30,7 @@ foreach ($_GET as $key => $value) {
 
 //if (isset($mergesession) && !empty($mergesession) && isset($mergesessionwith) && !empty($mergesessionwith) ) {
 if (isset($mergesession) && !empty($mergesession) && isset($mergesess1) && !empty($mergesess1) ) {
-    $qrystr = "SELECT MIN(timestart) as timestart, MAX(timeend) as timeend, MIN(session) as session, SUM(sessionsize) as sessionsize FROM $db_sessions_table WHERE session = ".quote_value($mergesession);
+    $qrystr = "SELECT MIN(timestart) as timestart, MAX(timeend) as timeend, MIN(session) as session, SUM(sessionsize) as sessionsize FROM $db_sessions_table WHERE eml='".$_SESSION['torque_eml']."' AND session = ".quote_value($mergesession);
     $i=1;
     while (isset(${'mergesess' . $i}) || !empty(${'mergesess' . $i})) {
         $qrystr = $qrystr . " OR session = '" . ${'mergesess' . $i} . "'";
@@ -50,12 +50,12 @@ if (isset($mergesession) && !empty($mergesession) && isset($mergesess1) && !empt
 
     foreach ($sessionids as $value) {
         if ($value == $newsession) {
-            $updatequery = "UPDATE $db_sessions_table SET timestart=$newtimestart, timeend=$newtimeend, sessionsize=$newsessionsize where session=$newsession";
+            $updatequery = "UPDATE $db_sessions_table SET timestart=$newtimestart, timeend=$newtimeend, sessionsize=$newsessionsize WHERE eml='".$_SESSION['torque_eml']."' AND session=$newsession";
             mysqli_query($con, $updatequery) or die(mysqli_error($con));
         } else {
-            $delquery = "DELETE FROM $db_sessions_table WHERE session = '$value'";
+            $delquery = "DELETE FROM $db_sessions_table WHERE eml='".$_SESSION['torque_eml']."' AND session = '$value'";
             mysqli_query($con, $delquery) or die(mysqli_error($con));
-            $updatequery = "UPDATE $db_table_full SET session=$newsession WHERE session=".quote_value($value);
+            $updatequery = "UPDATE $db_table_full SET session=$newsession WHERE user='".$_SESSION['torque_user']."' AND session=".quote_value($value);
             mysqli_query($con, $updatequery) or die(mysqli_error($con));
         }
     }
@@ -70,29 +70,37 @@ if (isset($mergesession) && !empty($mergesession) && isset($mergesess1) && !empt
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Open Torque Viewer</title>
+    <title>EV Charge Cost - Open Torque</title>
     <meta name="description" content="Open Torque Viewer">
     <meta name="author" content="Joe Gullo (surfrock66)">
-    <link rel="stylesheet" href="static/css/bootstrap.css">
+	<meta name="author" content="Ingo Nehls">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.0/chosen.min.css">
     <link rel="stylesheet" href="static/css/torque.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
     <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-    <script language="javascript" type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
     <script language="javascript" type="text/javascript" src="static/js/jquery.peity.min.js"></script>
     <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.jquery.min.js"></script>
     <script language="javascript" type="text/javascript" src="static/js/torquehelpers.js"></script>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   </head>
   <body>
-    <div class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="session.php">Open Torque Viewer</a>
-        </div>
-      </div>
-    </div>
+	<div class="container-xxl">
+	  <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+		<a href="session.php" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+		  <span class="fs-4">EV-Charge-Cost Torque Viewer</span>
+		</a>
+
+		<ul class="nav nav-pills">
+		  <li class="nav-item"><a href="session.php" class="nav-link active">Home</a></li>
+		  <?php    if ( $_SESSION['torque_user'] ) { ?>
+			<li class="nav-item"><a href="signup.php" class="nav-link"><?php echo $_SESSION['torque_user'] ?></a></li>
+			<li class="nav-item"><a href="session.php?logout=true" class="nav-link">Logout</a></li>
+		  <?php    } ?>
+		</ul>
+	  </header>
+	</div>
     <form style="margin-top:50px;" action="merge_sessions.php" method="get" id="formmerge" >
       <input type="hidden" name="mergesession" value="<?php echo $mergesession; ?>" />
       <div width="100%" align="center"><input class="btn btn-info btn-sm" type="submit" value="Merge Selected Sessions" /></div>
@@ -107,7 +115,7 @@ if (isset($mergesession) && !empty($mergesession) && isset($mergesess1) && !empt
         </thead>
         <tbody>
 <?php
-    $sessqry = mysqli_query($con, "SELECT timestart, timeend, session, profileName, sessionsize FROM $db_sessions_table WHERE sessionsize >= $min_session_size ORDER BY session desc") or die(mysqli_error($con));
+    $sessqry = mysqli_query($con, "SELECT timestart, timeend, session, profileName, sessionsize FROM $db_sessions_table WHERE eml='".$_SESSION['torque_eml']."' AND sessionsize >= $min_session_size ORDER BY session desc") or die(mysqli_error($con));
     $i = 0;
     while ($x = mysqli_fetch_array($sessqry)) {
 ?>

@@ -5,7 +5,7 @@ require_once("./auth_user.php");
 
 if (isset($_GET["sid"])) {
 	
-	$sql = mysqli_query($con, "SELECT id, description FROM torque_keys") or die(mysqli_error($con));
+	$sql = mysqli_query($con, "SELECT id, description FROM $db_keys_table WHERE user='".$_SESSION["torque_userid"]."'") or die(mysqli_error($con));
 	while ($row = mysqli_fetch_array($sql)) {
 		$keyiddesc[$row["id"]] = $row["description"];
 	}

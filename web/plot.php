@@ -44,7 +44,7 @@ if (!$source_is_fahrenheit && $use_fahrenheit) { //From Celsius to Fahrenheit
 if (isset($_GET["id"]) and in_array($_GET["id"], $sids)) {
     $session_id = mysqli_real_escape_string($con, $_GET['id']);
     // Get the torque key->val mappings
-    $keyquery = mysqli_query($con, "SELECT id,description,units FROM $db_name.$db_keys_table;") or die(mysqli_error($con));
+    $keyquery = mysqli_query($con, "SELECT id,description,units FROM $db_name.$db_keys_table; WHERE user='".$_SESSION["torque_userid"]."'") or die(mysqli_error($con));
     $keyarr = [];
     while($row = mysqli_fetch_assoc($keyquery)) {
       $keyarr[$row['id']] = array($row['description'], $row['units']);
@@ -62,7 +62,7 @@ if (isset($_GET["id"]) and in_array($_GET["id"], $sids)) {
 	$tableYear = date( "Y", $session_id/1000 );
 	$tableMonth = date( "m", $session_id/1000 );
 	$db_table_full = "{$db_table}_{$tableYear}_{$tableMonth}";
-	$sessionqry = mysqli_query($con, "SELECT $selectstring FROM $db_table_full WHERE session=".quote_value($session_id)." ORDER BY time DESC;") or die(mysqli_error($con));
+	$sessionqry = mysqli_query($con, "SELECT $selectstring FROM $db_table_full WHERE user='".$_SESSION["torque_userid"]."' AND session=".quote_value($session_id)." ORDER BY time DESC;") or die(mysqli_error($con));
 	while($row = mysqli_fetch_assoc($sessionqry)) {
 	    $i = 1;
 		while (isset(${'v' . $i})) {
