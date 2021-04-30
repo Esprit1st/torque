@@ -48,7 +48,6 @@ require_once("./auth_signup.php");
 					if ($_SESSION['torque_logged_in']) echo "<h4>Account</h4>";
 					else echo "<h4>Signup</h4>";
 					if ($signed_up==true) echo "<br />Signup complete. Please check your email and activate your account.";
-					else if ($data_saved==true) echo "<br />Data saved.<br /><a href=\"session.php\">Continue</a>";
 					else {
 				?>
 				<div class="row" style="padding-bottom:4px;">
@@ -78,9 +77,7 @@ require_once("./auth_signup.php");
 					<br /><div class="form-group"><input class="form-control btn-primary" type="submit" id="formlogin" name="Submit" value="Submit" /></div>
 				  </form>
 				</div>
-				<?php }
-					echo $debug;
-				?>
+				<?php } ?>
         </div>
 <?php
 	if ($_SESSION['torque_logged_in']) {
@@ -136,15 +133,15 @@ require_once("./auth_signup.php");
 				</div>
 			  </div>
 			</div>
-			<div class="modal fade" id="delete-complete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			<div class="modal fade" id="complete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
 			  <div class="modal-dialog">
 				<div class="modal-content">
 				  <div class="modal-header bg-success">
 					<h5 class="modal-title text-white" id="staticBackdropLabel">Complete</h5>
 					<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
 				  </div>
-				  <div class="modal-body">
-					<p>Your data has been deleted.</p>
+				  <div class="modal-body" id="complete-body">
+					<p>** filled by script **</p>
 				  </div>
 				  <div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
@@ -155,7 +152,13 @@ require_once("./auth_signup.php");
 			
 			<script language="javascript">
 			if ($(location).attr('href').split("?")[1] == "del") {
-				var completeModal = new bootstrap.Modal(document.getElementById("delete-complete"), {});
+				var completeModal = new bootstrap.Modal(document.getElementById("complete"), {});
+				  $("#complete-body > p").text("Your data has been deleted.")
+				  completeModal.show();
+			}
+			if ($(location).attr('href').split("?")[1] == "save") {
+				var completeModal = new bootstrap.Modal(document.getElementById("complete"), {});
+				  $("#complete-body > p").text("Your data has been updated.")
 				  completeModal.show();
 			}
 			$('#delete-data .modal-footer button').on('click', function(event) {

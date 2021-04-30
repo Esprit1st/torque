@@ -120,7 +120,7 @@ if ($_SESSION['torque_logged_in']) {
 			}
 			$userqry = mysqli_query($con, "UPDATE users SET ". implode(", ", $entries) .
 				" WHERE id='" . $_SESSION['torque_userid'] . "'") or die(mysqli_error($con));
-			$data_saved=true;
+			header("Location: ./signup.php?save");
 		}
 	}
 

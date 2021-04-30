@@ -22,12 +22,12 @@ if (isset($_GET["d"])) {
 		foreach ($alltables as $table) {
 			$sql = mysqli_query($con, "DELETE FROM $table WHERE user='" . $_SESSION["torque_userid"] . "'") or die(mysqli_error($con));
 			$sql = mysqli_query($con, "DELETE FROM $db_sessions_table WHERE eml='" . $_SESSION["torque_eml"] . "'") or die(mysqli_error($con));
-			//$sql = mysqli_query($con, "DELETE FROM $db_keys_table WHERE user='" . $_SESSION["torque_userid"] . "'") or die(mysqli_error($con));
 		}
 		if ($_GET["d"]=="torque") header("Location: ./signup.php?del");
 	}
 	//** delete account
 	if ($_GET["d"]=="all") {
+		$sql = mysqli_query($con, "DELETE FROM $db_keys_table WHERE user='" . $_SESSION["torque_userid"] . "'") or die(mysqli_error($con));
 		$sql = mysqli_query($con, "DELETE FROM $db_users_table WHERE id='" . $_SESSION["torque_userid"] . "'") or die(mysqli_error($con));
 		logout_user();
 	}
