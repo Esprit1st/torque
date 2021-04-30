@@ -102,7 +102,9 @@ if ($_SESSION['torque_logged_in']) {
 		//** Throw error if email not valid or taken
 		if ( !validemail($_POST["email"]) || !availableemail($_POST["email"]) ) { $error["email"] = true; }
 		//** Throw error if torque-eml not valid
-		if ( !empty($_POST["torque_eml"]) && !validtorqueeml($_POST["torque_eml"]) || !availabletorqueeml($_POST["torque_eml"]) ) { $error["torque_eml"] = true; }
+		if ( !validtorqueeml($_POST["torque_eml"]) || availabletorqueeml($_POST["torque_eml"])==0 ) { $error["torque_eml"] = true; }
+		//** Throw error if abrp-forward-url not valid
+		if ( !validabrp($_POST["abrp"]) ) { $error["abrp"] = true; }
 		//** update userdata to database
 		if (!$error ) {
 			//** If Password is set, generate hash and save to DB
@@ -118,8 +120,14 @@ if ($_SESSION['torque_logged_in']) {
 				$entries[] = $key ." = ". quote_value($value);
 				//$debug.=$_POST[$value];
 			}
+			//** update user entry
 			$userqry = mysqli_query($con, "UPDATE users SET ". implode(", ", $entries) .
 				" WHERE id='" . $_SESSION['torque_userid'] . "'") or die(mysqli_error($con));
+			//** update all old sessions with the new torque_eml if the old and new eml are different
+			if ( availabletorqueeml($data["torque_eml"])==2 ) {
+				$userqry = mysqli_query($con, "UPDATE $db_sessions_table SET eml='" . $data["torque_eml"] . "' WHERE eml='" . $_SESSION['torque_eml'] . "'") or die(mysqli_error($con));
+				$_SESSION['torque_eml'] = $data["torque_eml"];
+			}
 			header("Location: ./signup.php?save");
 		}
 	}
@@ -174,15 +182,26 @@ function availableemail($var) {
 	return true;
 }
 
+function validtorqueeml($var) {
+	//** check for valid torque_eml
+	if ( empty($var) || preg_match("/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/", $var) ) return true;
+}
+
 function availabletorqueeml($var) {
 	//** check if torque_eml is taken
+	//** 0 = not available
+	//** 1 = available
+	//** 2 = available but eml needs to be updated
 	global $db_users_table, $con;
-	$userqry = mysqli_query($con, "SELECT id FROM $db_users_table WHERE torque_eml=" . quote_value($var) ) or die(mysqli_error($con));
-	if ( mysqli_num_rows($userqry) > 0 ) {
-		$row = mysqli_fetch_assoc($userqry);
-		if ( $row["id"] != $_SESSION["torque_userid"] ) return false;
-	}
-	return true;
+	$userqry = mysqli_query($con, "SELECT id FROM $db_users_table WHERE id<>'".$_SESSION["torque_userid"]."' AND torque_eml=" . quote_value($var) ) or die(mysqli_error($con));
+	if ( mysqli_num_rows($userqry) > 0 ) return "0";
+	else if ( $_SESSION["torque_eml"]!=$var ) return "2";
+	else return "1";
+}
+
+function validabrp($var) {
+	//** check for valid abrp forward address
+	if ( empty($var) || preg_match("/^http:\/\/api\.iternio\.com\/1\/tlm\/torque$/", $var) ) return true;
 }
 
 function validtoken($var) {

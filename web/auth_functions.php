@@ -159,11 +159,6 @@ function auth_db_id()
 	}
 }
 
-function validtorqueeml($var) {
-	//** torque_eml
-	if ( preg_match("/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/", $var) ) return true;
-}
-
 function logout_user()
 {
     session_destroy();

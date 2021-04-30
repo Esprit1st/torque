@@ -58,18 +58,12 @@ require_once("./auth_signup.php");
 					?>
 					<div class="mb-3 form-group"><label class="form-label" for="password">Password</label><input class="form-control<?php if ($error["pass"]) echo " is-invalid" ?>" type="password" id="password" name="pass" value="<?php echo $pass ?>" placeholder="(Password)" title="Password" /><div id="passFeedback" class="invalid-feedback">Invalid Password. Must be 8-32 characters long. Must have at least one upper and lowercase letter, number and special character: #?!@$%^&*-</div></div>
 					<div class="mb-3 form-group"><label class="form-label" for="pass2">Confirm Password</label><input class="form-control<?php if ($error["pass2"]) echo " is-invalid" ?>" type="password" id="pass2" name="pass2" value="<?php echo $pass2 ?>" placeholder="(Password)" title="verify Password" /><div id="pass2Feedback" class="invalid-feedback">Passwords don't match.</div></div>
-					<?php
-					if ($error["email"]==false) { ?><div class="mb-3 form-group"><label class="form-label" for="email">Email</label><input class="form-control" id="email" type="text" name="email" value="<?php echo $email ?>" placeholder="(Email)" title="Email" /><div id="emailFeedback" class="invalid-feedback">Email adress invalid.</div></div><?php }
-					else { ?><div class="mb-3 form-group"><label class="form-label" for="email">Email</label><input class="form-control is-invalid" id="email" type="text" name="email" value="<?php echo $email ?>" placeholder="(Email)" title="Email" /><div id="emailFeedback" class="invalid-feedback">Email adress invalid.</div></div><?php }
-					?>
+					<div class="mb-3 form-group"><label class="form-label" for="email">Email</label><input class="form-control<?php if ($error["email"]) echo " is-invalid"; ?>" id="email" type="text" name="email" value="<?php echo $email ?>" placeholder="(Email)" title="Email" /><div id="emailFeedback" class="invalid-feedback">Email adress invalid.</div></div>
 <?php
 	if ($_SESSION['torque_logged_in']) {
 ?>
-					<?php
-					if ($error["torque_eml"]==false) { ?><div class="mb-3 form-group"><label class="form-label" for="torque_eml">Torque-eml (obtain from ABRP)</label><input class="form-control" id="torque_eml" type="text" name="torque_eml" value="<?php echo $torque_eml; ?>" placeholder="(Torque eml)" title="Torque EML" /><div id="torque_emlFeedback" class="invalid-feedback">Torque-eml invalid.</div></div><?php }
-					else { ?><div class="mb-3 form-group"><label class="form-label" for="torque_eml">Torque-eml (obtain from ABRP)</label><input class="form-control" id="torque_eml" type="text" name="torque_eml" value="<?php echo $torque_eml; ?>" placeholder="(Torque eml)" title="Torque EML" /><div id="torque_emlFeedback" class="invalid-feedback">Torque-eml invalid.</div></div><?php }
-					?>
-					<div class="mb-3 form-group"><label class="form-label" for="abrp">ABRP forward URL</label><input class="form-control" id="abrp" type="text" name="abrp" value="<?php echo $abrp; ?>" placeholder="(ABRP forward URL)" /></div>
+					<div class="mb-3 form-group"><label class="form-label" for="torque_eml">Torque-eml (obtain from ABRP)</label><input class="form-control<?php if ($error["torque_eml"]) echo " is-invalid"; ?>" id="torque_eml" type="text" name="torque_eml" value="<?php echo $torque_eml; ?>" placeholder="(Torque eml)" title="Torque EML" /><div id="torque_emlFeedback" class="invalid-feedback">Torque-eml invalid.</div></div>
+					<div class="mb-3 form-group"><label class="form-label" for="abrp">ABRP forward URL</label><input class="form-control<?php if ($error["abrp"]) echo " is-invalid"; ?>" id="abrp" type="text" name="abrp" value="<?php echo $abrp; ?>" placeholder="(ABRP forward URL)" /><div id="abrpFeedback" class="invalid-feedback">URL invalid.</div></div>
 					<div class="mb-3 form-group">Upload-URL for Torque-pro:<br /><?php echo $t_upload_url ?></div>
 <?php
 	}
