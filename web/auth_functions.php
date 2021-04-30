@@ -81,21 +81,6 @@ function auth_user()
 		return true;
 	}
 	else return false;
-
-    // THIS PART IS OLD AND NEEDS TO GO, just left in for eventual debugging
-	//No User/Pass defined: Allow everything
-    if ( !isset($users) || empty($users) ) {
-        return true;
-    } else {
-        foreach ($users as $key => $value) {
-            if ($user == $users[$key]['user'] && $pass == $users[$key]['pass']) {
-                $_SESSION['torque_user'] = $users[$key]['user'];
-                return true;
-            }
-        }
-    }
-
-    return false;
 }
 
 function auth_db_user($user, $pass) {
