@@ -44,7 +44,7 @@ if (!$source_is_fahrenheit && $use_fahrenheit) { //From Celsius to Fahrenheit
 if (isset($_GET["id"]) and in_array($_GET["id"], $sids)) {
     $session_id = mysqli_real_escape_string($con, $_GET['id']);
     // Get the torque key->val mappings
-    $keyquery = mysqli_query($con, "SELECT id,description,units FROM $db_name.$db_keys_table; WHERE user='".$_SESSION["torque_userid"]."'") or die(mysqli_error($con));
+    $keyquery = mysqli_query($con, "SELECT id,description,units FROM $db_name.$db_keys_table WHERE user='".$_SESSION["torque_userid"]."';") or die(mysqli_error($con));
     $keyarr = [];
     while($row = mysqli_fetch_assoc($keyquery)) {
       $keyarr[$row['id']] = array($row['description'], $row['units']);
