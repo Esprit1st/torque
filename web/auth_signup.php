@@ -187,7 +187,7 @@ function availabletorqueeml($var) {
 
 function validtoken($var) {
 	//** valid token (hex characters)
-	if ( preg_match("/^[a-f0-9]*$/", $var) ) return true;
+	if ( preg_match("/^[a-f0-9]{64}$/", $var) ) return true;
 }
 
 ?>

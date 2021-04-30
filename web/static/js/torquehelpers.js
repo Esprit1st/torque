@@ -111,6 +111,14 @@ var showErrorSuccess = function(element, status) {
 
 // form validation
 var validate = function() {
+	validate_name();
+	validate_password();
+	validate_password2();
+	validate_email();
+	validate_torqueeml();
+};
+	
+function validate_name() {
   //validate name
   var name = $('#username').val(),
     nameReg = /^[a-zA-Z0-9_-]{4,15}$/
@@ -118,7 +126,9 @@ var validate = function() {
     return showErrorSuccess($('#username'), false);
   }
   showErrorSuccess($('#username'));
+}
 
+function validate_password() {
   //validate password
   var password = $('#password').val(),
     passwordReg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,32}$/
@@ -128,14 +138,19 @@ var validate = function() {
 	  }
   }
   showErrorSuccess($('#password'));
+}
 
+function validate_password2() {
   //password & pass2 match
+  var password = $('#password').val();
   var pass2 = $('#pass2').val();
   if (password != pass2) {
     return showErrorSuccess($('#pass2'), false);
   }
   showErrorSuccess($('#pass2'));
+}
 
+function validate_email() {
   //validate email
   var email = $('#email').val(),
     emailReg = /^[^@:; \t\r\n]+@[^@:; \t\r\n]+\.[^@:; \t\r\n]+$/
@@ -143,7 +158,9 @@ var validate = function() {
     return showErrorSuccess($('#email'), false);
   }
   showErrorSuccess($('#email'));
+}
   
+function validate_torqueeml() {
   //validate torque eml
   var teml = $('#torque_eml').val(),
     torqueemlReg = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/
@@ -151,4 +168,4 @@ var validate = function() {
     if (teml != '') return showErrorSuccess($('#torque_eml'), false);
   }
   showErrorSuccess($('#torque_eml'));
-};
+}
