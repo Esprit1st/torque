@@ -256,7 +256,7 @@ $plotvariables=implode(",", $plotvariables);
 	<div class="container-fluid h-100">
 		<div class="row h-100">
 			<!-- left column with map -->
-			<div class="col-7 col-xxl-9" id="map-container">
+			<div class="col-sm-7 col-xxl-9 mb-3" id="map-container">
 				<div id="map-canvas"></div>
 				<script type="text/javascript">
 				<!-- Initialize drive path layer -->
@@ -309,7 +309,7 @@ $plotvariables=implode(",", $plotvariables);
 			</div>
 			
 			<!-- right column with controls -->
-			<div id="right-container" class="col-5 col-xxl-3">
+			<div id="right-container" class="col-sm-5 col-xxl-3">
 			
 			
 			
