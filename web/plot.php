@@ -7,15 +7,15 @@ require_once("./parse_functions.php");
 // TODO: Use the userDefault fields to do these conversions dynamically
 
 //Speed conversion
-if (!$source_is_miles && $use_miles) {
+if (!$_SESSION['config_source-is-m'] && $_SESSION['config_use-m']) {
     $speed_factor = 0.621371;
     $speed_measurand = ' (mph)';
     $distance_measurand = ' (miles)';
-} elseif ($source_is_miles && $use_miles) {
+} elseif ($_SESSION['config_source-is-m'] && $_SESSION['config_use-m']) {
     $speed_factor = 1.0;
     $speed_measurand = ' (mph)';
     $distance_measurand = ' (miles)';
-} elseif ($source_is_miles && !$use_miles) {
+} elseif ($_SESSION['config_source-is-m'] && !$_SESSION['config_use-m']) {
     $speed_factor = 1.609344;
     $speed_measurand = ' (km/h)';
     $distance_measurand = ' (km)';
@@ -26,13 +26,13 @@ if (!$source_is_miles && $use_miles) {
 }
 
 //Temperature Conversion
-if (!$source_is_fahrenheit && $use_fahrenheit) { //From Celsius to Fahrenheit
+if (!$_SESSION['config_source-is-f'] && $_SESSION['config_use-f']) { //From Celsius to Fahrenheit
     $temp_func = function ($temp) { return $temp*9.0/5.0+32.0; };
     $temp_measurand = ' (&deg;F)';
-} elseif ($source_is_fahrenheit && $use_fahrenheit) { //Just Fahrenheit
+} elseif ($_SESSION['config_source-is-f'] && $_SESSION['config_use-f']) { //Just Fahrenheit
     $temp_func = function ($temp) { return $temp; };
     $temp_measurand = ' (&deg;F)';
-} elseif ($source_is_fahrenheit && !$use_fahrenheit) { //From Fahrenheit to Celsius
+} elseif ($_SESSION['config_source-is-f'] && !$_SESSION['config_use-f']) { //From Fahrenheit to Celsius
     $temp_func = function ($temp) { return ($temp-32.0)*5.0/9.0; };
     $temp_measurand = ' (&deg;C)';
 } else { //Just Celsius

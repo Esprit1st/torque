@@ -64,36 +64,31 @@ function get_eml() {
     }
 }
 
-//True if User/Pass match those of creds.php
-//If both $auth_user and $auth_pass are empty, all passwords are accepted.
+//True if User/Pass match those in DB
 function auth_user()
 {
-    //global $auth_user, $auth_pass;
-    global $users;
-    
     $user = get_user();
     $pass = get_pass();
 
 	//** User credentials correct?
-	if ($userid = auth_db_user($user, $pass)) {
-		$_SESSION['torque_user'] = $user;
-		$_SESSION['torque_userid'] = $userid;
-		return true;
-	}
+	if ($userid = auth_db_user($user, $pass)) return true;
 	else return false;
 }
 
 function auth_db_user($user, $pass) {
 	//** check if login is correct
 	global $db_users_table, $con;
-	$userqry = mysqli_query($con, "SELECT id, username, password, email, torque_eml FROM $db_users_table WHERE username=" . quote_value($user) . " AND active<>'0'") or die(mysqli_error($con));
+	$userqry = mysqli_query($con, "SELECT id, username, password, email, torque_eml, config FROM $db_users_table WHERE username=" . quote_value($user) . " AND active<>'0'") or die(mysqli_error($con));
 	if (mysqli_num_rows($userqry) != 1) return false;
 	else {
 		$row = mysqli_fetch_assoc($userqry);
 		//$user, $pass, $row["username"], $row["password"]
 		if (password_verify($pass, $row["password"])) {
+			$_SESSION['torque_user'] = $row["username"];
+			$_SESSION['torque_userid'] = $row["id"];
 			$_SESSION['torque_eml'] = $row["torque_eml"];
 			$_SESSION['torque_useremail'] = $row["email"];
+			setconfigsession($row["config"]);
 			return $row["id"];
 		}
 		else return false;
@@ -101,6 +96,17 @@ function auth_db_user($user, $pass) {
 	}
 }
 
+//** config-default: 0001
+//** [0]  = source_is_fahrenheit [0,1]
+//** [1]  = use_fahrenheit       [0,1]
+//** [2]  = source_is_miles      [0,1]
+//** [3]  = use_miles            [0,1]
+function setconfigsession($config) {
+	$_SESSION['config_source-is-f'] = boolval($config[0]);
+	$_SESSION['config_use-f'] = boolval($config[1]);
+	$_SESSION['config_source-is-m'] = boolval($config[2]);
+	$_SESSION['config_use-m'] = boolval($config[3]);
+}
 
 //True is Torque-ID matches any of the IDs or HASHes defined in creds.php
 //If both IDs and HASHes are empty, all IDs are accepted.

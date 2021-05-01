@@ -116,6 +116,7 @@ if ($_SESSION['torque_logged_in']) {
 			}
 			$data["torque_eml"]=$_POST["torque_eml"];
 			$data["abrp"]=$_POST["abrp"];
+			$data["config"]=is_true($_POST["config-sf"]).is_true($_POST["config-uf"]).is_true($_POST["config-sm"]).is_true($_POST["config-um"]);
 			foreach ($data as $key => $value) {
 				$entries[] = $key ." = ". quote_value($value);
 				//$debug.=$_POST[$value];
@@ -128,6 +129,8 @@ if ($_SESSION['torque_logged_in']) {
 				$userqry = mysqli_query($con, "UPDATE $db_sessions_table SET eml='" . $data["torque_eml"] . "' WHERE eml='" . $_SESSION['torque_eml'] . "'") or die(mysqli_error($con));
 				$_SESSION['torque_eml'] = $data["torque_eml"];
 			}
+			//** update cookie with config
+			setconfigsession($data["config"]);
 			header("Location: ./signup.php?save");
 		}
 	}
@@ -202,6 +205,10 @@ function validabrp($var) {
 function validtoken($var) {
 	//** valid token (hex characters)
 	if ( preg_match("/^[a-f0-9]{64}$/", $var) ) return true;
+}
+
+function is_true($val){
+    return ( $val=="on" ? 1 : 0 );
 }
 
 ?>
