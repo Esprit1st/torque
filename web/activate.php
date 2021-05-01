@@ -31,7 +31,8 @@ require_once("./auth_signup.php");
 		</a>
 
 		<ul class="nav nav-pills">
-		  <li class="nav-item"><a href="session.php" class="nav-link active">Home</a></li>
+		  <?php if (!empty($homelink)) { ?><li class="nav-item"><a href="<?php echo $homelink; ?>" class="nav-link active">Home</a></li><?php } ?>
+		    <li class="nav-item"><a href="session.php" class="nav-link">Torque</a></li>
 		  <?php    if ( $_SESSION['torque_user'] ) { ?>
 			<li class="nav-item"><a href="signup.php" class="nav-link"><?php echo $_SESSION['torque_user'] ?></a></li>
 			<li class="nav-item"><a href="session.php?logout=true" class="nav-link">Logout</a></li>

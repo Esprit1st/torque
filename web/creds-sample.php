@@ -25,6 +25,8 @@ $users = array();
 $torque_id = '';        //Sample: 123456789012345
 $torque_id_hash = '';   //Sample: 58b9b9268acaef64ac6a80b0543357e6
 //Just 'settings', could be moved to a config file later.
+$homelink = "";
+
 $hide_empty_variables = true;
 $show_session_length = true;
 
