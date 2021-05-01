@@ -182,11 +182,6 @@ function availableemail($var) {
 	return true;
 }
 
-function validtorqueeml($var) {
-	//** check for valid torque_eml
-	if ( empty($var) || preg_match("/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/", $var) ) return true;
-}
-
 function availabletorqueeml($var) {
 	//** check if torque_eml is taken
 	//** 0 = not available
