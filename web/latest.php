@@ -1,56 +1,23 @@
 <?php
-require_once ('creds.php');
-require_once ('auth_functions.php');
+require_once("./db.php");
+require_once("./auth_user.php");
 
-//session.cookie_path = "/torque/";
-session_set_cookie_params(0,dirname($_SERVER['SCRIPT_NAME'])); 
-if (!isset($_SESSION)) { session_start(); }
+//** grab latest session
+$sql = mysqli_query($con, "SELECT * FROM $db_sessions_table WHERE eml='".$_SESSION["torque_eml"]."' ORDER BY time DESC LIMIT 1") or die(mysqli_error($con));
+if ( $latest_session = mysqli_fetch_array($sql) ) {
 
-//This variable will be evaluated at the end of this file to check if a user is authenticated
-$logged_in = false;
+	//** grab latest data from that session
+	$session_ym = date("Y_m", substr($latest_session["time"],0,10));
+	$sql = mysqli_query($con, "SELECT * FROM " . $db_table . "_" . $session_ym . " WHERE user='".$_SESSION["torque_userid"]."' AND session='".$latest_session["session"]."' ORDER BY time DESC LIMIT 1") or die(mysqli_error($con));
+	$latest_data = mysqli_fetch_array($sql);
 
-if (!isset($_SESSION['torque_logged_in'])) {
-  $_SESSION['torque_logged_in'] = false;
+	//** grab column description
+	$sql = mysqli_query($con, "SELECT id, description, units FROM $db_keys_table WHERE user='".$_SESSION["torque_userid"]."'") or die(mysqli_error($con));
+	while ($row = mysqli_fetch_array($sql)) {
+		$keyiddesc[$row["id"]][0] = $row["description"];
+		$keyiddesc[$row["id"]][1] = $row["units"];
+	}
 }
-$logged_in = (boolean)$_SESSION['torque_logged_in'];
-
-//There are two ways to authenticate for Open Torque Viewer
-//The uploading data provider running on Android uses its torque ID, while the User Interface uses User/Password.
-//Which method will be chosed depends on the variable set before including this file
-// Set "$auth_user_with_torque_id" for Authetification with ID
-// Set "$auth_user_with_user_pass" for Authetification with User/Password
-// Default is authentication with user/pass
-
-if(!isset($auth_user_with_user_pass)) {
-  $auth_user_with_user_pass = true;
-}
-
-if (!$logged_in && $auth_user_with_user_pass)
-{
-  if ( auth_user() ) {
-    $logged_in = true;
-  }
-}
-
-//ATTENTION:
-//The Torque App has no way to provide other authentication information than its torque ID.
-//So, if no restriction of Torque IDs was defined in "creds.php", access to the file "upload_data.php" is always possible.
-
-if(!isset($auth_user_with_torque_id)) {
-  $auth_user_with_torque_id = false;
-}
-
-if (!$logged_in && $auth_user_with_torque_id)
-{
-  if ( auth_id() ) {
-    $session_id = get_id();
-    $logged_in = true;
-  }
-}
-
-$_SESSION['torque_logged_in'] = $logged_in;
-
-if (!$logged_in) {
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -60,7 +27,6 @@ if (!$logged_in) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>EV Charge Cost - Open Torque</title>
     <meta name="description" content="Open Torque Viewer">
-    <meta name="author" content="Matt Nicklay">
     <meta name="author" content="Joe Gullo (surfrock66)">
 	<meta name="author" content="Ingo Nehls">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
@@ -72,6 +38,7 @@ if (!$logged_in) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
     <script language="javascript" type="text/javascript" src="static/js/jquery.peity.min.js"></script>
     <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.jquery.min.js"></script>
+    <script language="javascript" type="text/javascript" src="static/js/torquehelpers.js"></script>
   </head>
   <body>
 	<div class="container-xxl">
@@ -91,29 +58,37 @@ if (!$logged_in) {
 		</ul>
 	  </header>
 	</div>
-    <div class="container">
-        <div id="right-container" class="col-md-5 col-xs-12">
-          <div id="right-cell">
-            <h3>Login</h3>
-            <div style="padding-bottom:4px;">
-              <form method="post" class="form-horizontal" role="form" action="session.php" id="formlogin">
-				<div class="mb-3"><input type="text" name="user" class="form-control" placeholder="(Username)" aria-label="Username"></div>
-				<div class="mb-3"><input type="password" name="pass" class="form-control" placeholder="(Password)" aria-label="Password"></div>
-                <input class="btn btn-primary" type="submit" id="formlogin" name="Login" value="Login" />
-              </form>
-            </div>
-			<a href="signup.php">Sign up</a><br />
-			<a href="forgot.php">Forgot Password?</a>
-          </div>
-		  <?php echo $debug ?>
-        </div>
-    </div>
+	<div class="container">
+	<div class="row">
+		<div class="badge bg-info mb-3"><h4>Session</h4></div>
+		<?php echo print_table($latest_session, "session,time,profileName,timestart,timeend,sessionsize"); ?>
+		<div class="badge bg-info mb-3"><h4>Data</h4></div>
+		<?php echo print_table($latest_data, ""); ?>
+	</div>
+	</div>
   </body>
 </html>
 <?php
-  exit(0);
-} else {
-  //Prepare session
-  //Connect to Sql, ...
+
+function print_table ($array, $vars) {
+	$display0=false;
+	global $keyiddesc;
+	$out1="";
+	$out2="";
+	if ($vars) $vars = explode(",", $vars);
+	foreach ( $array as $key => $value ) {
+		if ( $display0 || empty($value)==$display0 ) {
+			if ( (in_array($key, $vars, true) || empty($vars)) && !is_int($key) ) {
+				if (strstr($key, "time")) $value = date("m/d/Y h:i", substr($value,0,10));
+				if ( $keyiddesc[$key] ) {
+					$value .= "&nbsp;".$keyiddesc[$key][1];
+					$key = $keyiddesc[$key][0];
+				}
+				$out1 .= "<div class=\"col text-center text-nowrap pb-5\"><div class=\"fw-bold\">" . $key . "</div><br />" . $value . "</div>";
+			}
+		}
+	}
+	return "<div class=\"row\">".$out1."</div>";
 }
+
 ?>
