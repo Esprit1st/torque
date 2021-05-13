@@ -90,7 +90,7 @@ require_once("./auth_signup.php");
 ?>
 		<div class="col-md-6 col-xs-12">
 			<h4>My Data</h4>
-			<p>We understand that your data saved here is very sensitive. So you are completely in control of your data!</p>
+			<p>The data saved here is very sensitive. So you are completely in control of your personal data!</p>
 			<p>You have three options to delete your data.</p>
 			<p>You can either anonymize your GPS positions in all logged data-sessions or delete all logged data. Finally you can delete your account and all associated data.</p>
 			<p>Every option further down includes the upper options. Deleting your account will also delete all your data. Deleting all your data will keep your account active.</p>
