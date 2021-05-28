@@ -116,7 +116,11 @@ if ($_SESSION['torque_logged_in']) {
 			}
 			$data["torque_eml"]=$_POST["torque_eml"];
 			$data["abrp"]=$_POST["abrp"];
-			$data["config"]=is_true($_POST["config-sf"]).is_true($_POST["config-uf"]).is_true($_POST["config-sm"]).is_true($_POST["config-um"]);
+			$data["config"]=$_SESSION["torque_config"];
+			$data["config"][0]=is_true($_POST["config-sf"]);
+			$data["config"][1]=is_true($_POST["config-uf"]);
+			$data["config"][2]=is_true($_POST["config-sm"]);
+			$data["config"][3]=is_true($_POST["config-um"]);
 			foreach ($data as $key => $value) {
 				$entries[] = $key ." = ". quote_value($value);
 				//$debug.=$_POST[$value];
@@ -130,7 +134,7 @@ if ($_SESSION['torque_logged_in']) {
 				$_SESSION['torque_eml'] = $data["torque_eml"];
 			}
 			//** update cookie with config
-			setconfigsession($data["config"]);
+			$_SESSION["torque_config"]=$data["config"];
 			header("Location: ./signup.php?save");
 		}
 	}

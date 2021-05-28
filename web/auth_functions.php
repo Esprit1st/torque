@@ -88,7 +88,7 @@ function auth_db_user($user, $pass) {
 			$_SESSION['torque_userid'] = $row["id"];
 			$_SESSION['torque_eml'] = $row["torque_eml"];
 			$_SESSION['torque_useremail'] = $row["email"];
-			setconfigsession($row["config"]);
+			$_SESSION['torque_config'] = $row["config"];
 			return $row["id"];
 		}
 		else return false;
@@ -101,12 +101,7 @@ function auth_db_user($user, $pass) {
 //** [1]  = use_fahrenheit       [0,1]
 //** [2]  = source_is_miles      [0,1]
 //** [3]  = use_miles            [0,1]
-function setconfigsession($config) {
-	$_SESSION['config_source-is-f'] = boolval($config[0]);
-	$_SESSION['config_use-f'] = boolval($config[1]);
-	$_SESSION['config_source-is-m'] = boolval($config[2]);
-	$_SESSION['config_use-m'] = boolval($config[3]);
-}
+
 
 //True is Torque-ID matches any of the IDs or HASHes defined in creds.php
 //If both IDs and HASHes are empty, all IDs are accepted.
