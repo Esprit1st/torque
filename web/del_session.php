@@ -21,7 +21,7 @@ if (isset($deletesession) && !empty($deletesession)) {
     $db_table_full = "{$db_table}_{$tableYear}_{$tableMonth}";
     if (isset($deletefrom) && !empty($deletefrom) && isset($deleteto) && !empty($deleteto)) {
 		$range = " AND time >= " . quote_value($deletefrom) . " AND time <= " . quote_value($deleteto);
-		$backtodelsession = $deletesession;
+		$backtodelsession = $deletesession . "&yearmonth=" . date( "Y", $deletesession/1000) . "_" . date( "m", $deletesession/1000);
 	}
 	else {
 		$range = "";
