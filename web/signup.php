@@ -73,10 +73,12 @@ require_once("./auth_signup.php");
 					<div class="row">
 						<div class="col-md-6 mb-3 form-group"><div class="form-check"><input class="form-check-input" type="checkbox" name="config-sm" id="config-sm"<?php if ($_SESSION['torque_config'][2]) echo " checked"; ?>><label class="form-check-label" for="config-sm">Source in Miles</label></div></div>
 						<div class="col-md-6 mb-3 form-group"><div class="form-check"><input class="form-check-input" type="checkbox" name="config-um" id="config-um"<?php if ($_SESSION['torque_config'][3]) echo " checked"; ?>><label class="form-check-label" for="config-um">Use Miles</label></div></div>
-						</div>
+					</div>
 					<div class="mb-3 form-group"><label class="form-label" for="torque_eml">Torque-eml (obtain from ABRP)</label><input class="form-control<?php if ($error["torque_eml"]) echo " is-invalid"; ?>" id="torque_eml" type="text" name="torque_eml" value="<?php echo $torque_eml; ?>" placeholder="(Torque eml)" title="Torque EML" /><div id="torque_emlFeedback" class="invalid-feedback">Torque-eml invalid.</div></div>
 					<div class="mb-3 form-group"><label class="form-label" for="abrp">ABRP forward URL</label><input class="form-control<?php if ($error["abrp"]) echo " is-invalid"; ?>" id="abrp" type="text" name="abrp" value="<?php echo $abrp; ?>" placeholder="(ABRP forward URL)" /><div id="abrpFeedback" class="invalid-feedback">URL invalid.</div></div>
 					<div class="mb-3 form-group">Upload-URL for Torque-pro:<br /><?php echo $t_upload_url ?></div>
+					
+					<?php require_once("./config_alert.php"); ?>
 <?php
 	}
 ?>

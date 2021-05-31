@@ -147,16 +147,16 @@ function auth_id()
     return false;
 }
 
-//** This will return the user-id extracted from the user-db using the torque-eml when the app uploads data
+//** This will return the user-id and more extracted from the user-db using the torque-eml when the app uploads data
 function auth_db_id()
 {
 	global $db_users_table, $con;
 	$eml=get_eml();
-	$userqry = mysqli_query($con, "SELECT id, abrp FROM $db_users_table WHERE torque_eml=" . quote_value($eml) . " AND active<>'0'") or die(mysqli_error($con));
+	$userqry = mysqli_query($con, "SELECT id, abrp, config, email FROM $db_users_table WHERE torque_eml=" . quote_value($eml) . " AND active<>'0'") or die(mysqli_error($con));
 	if (mysqli_num_rows($userqry) != 1) return false;
 	else {
 		$row = mysqli_fetch_assoc($userqry);
-		return array("id" => $row["id"], "abrp" => $row["abrp"]);
+		return array("id" => $row["id"], "abrp" => $row["abrp"], "config" => $row["config"], "email" => $row["email"]);
 	}
 }
 
