@@ -7,15 +7,15 @@ require_once("./parse_functions.php");
 // TODO: Use the userDefault fields to do these conversions dynamically
 
 //Speed conversion
-if (!$_SESSION['config_source-is-m'] && $_SESSION['config_use-m']) {
+if (!$_SESSION['torque_config'][2] && $_SESSION['torque_config'][3]) {
     $speed_factor = 0.621371;
     $speed_measurand = ' (mph)';
     $distance_measurand = ' (miles)';
-} elseif ($_SESSION['config_source-is-m'] && $_SESSION['config_use-m']) {
+} elseif ($_SESSION['torque_config'][2] && $_SESSION['torque_config'][3]) {
     $speed_factor = 1.0;
     $speed_measurand = ' (mph)';
     $distance_measurand = ' (miles)';
-} elseif ($_SESSION['config_source-is-m'] && !$_SESSION['config_use-m']) {
+} elseif ($_SESSION['torque_config'][2] && !$_SESSION['torque_config'][3]) {
     $speed_factor = 1.609344;
     $speed_measurand = ' (km/h)';
     $distance_measurand = ' (km)';
@@ -26,13 +26,13 @@ if (!$_SESSION['config_source-is-m'] && $_SESSION['config_use-m']) {
 }
 
 //Temperature Conversion
-if (!$_SESSION['config_source-is-f'] && $_SESSION['config_use-f']) { //From Celsius to Fahrenheit
+if (!$_SESSION['torque_config'][0] && $_SESSION['torque_config'][1]) { //From Celsius to Fahrenheit
     $temp_func = function ($temp) { return $temp*9.0/5.0+32.0; };
     $temp_measurand = ' (&deg;F)';
-} elseif ($_SESSION['config_source-is-f'] && $_SESSION['config_use-f']) { //Just Fahrenheit
+} elseif ($_SESSION['torque_config'][0] && $_SESSION['torque_config'][1]) { //Just Fahrenheit
     $temp_func = function ($temp) { return $temp; };
     $temp_measurand = ' (&deg;F)';
-} elseif ($_SESSION['config_source-is-f'] && !$_SESSION['config_use-f']) { //From Fahrenheit to Celsius
+} elseif ($_SESSION['torque_config'][0] && !$_SESSION['torque_config'][1]) { //From Fahrenheit to Celsius
     $temp_func = function ($temp) { return ($temp-32.0)*5.0/9.0; };
     $temp_measurand = ' (&deg;C)';
 } else { //Just Celsius

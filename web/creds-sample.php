@@ -14,8 +14,6 @@ $db_users_table = 'users';
 
 // Array of user credentials for Browser login
 $users = array();
-// $users[] = array("user" => "torque", "pass" => "open");      // Sample: 'torque' / 'open'
-// $users[] = array("user" => "second", "pass" => "mypass");    // Add additional strings for more users
 
 //If you want to restrict access to upload_data.php, 
 // either enter your torque ID as shown in the torque app, 
@@ -32,6 +30,12 @@ $show_session_length = true;
 
 #Sessions less than limit will not be shown
 $min_session_size = 20;
+
+# Headers for emails
+$email_headers = array(
+	'From' => 'do_not_reply@'.$_SERVER['SERVER_NAME'],
+    'Reply-To' => 'webmaster@'.$_SERVER['SERVER_NAME']
+);
 
 #ABRP forwarding active
 $use_abrp = true;

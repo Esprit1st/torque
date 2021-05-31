@@ -1,11 +1,6 @@
 <?php
 session_start();
 
-$email_headers = array(
-	'From' => 'do_not_reply@'.$_SERVER['SERVER_NAME'],
-    'Reply-To' => 'webmaster@'.$_SERVER['SERVER_NAME']
-);
-
 //** forgot password / generate token and save to DB
 if (!$_SESSION['torque_logged_in'] && $_POST["Submit"]=="Send" && $_POST["email"]!="") {
 	if ( validemail($_POST["email"]) ) {
@@ -105,25 +100,41 @@ if ($_SESSION['torque_logged_in']) {
 		if ( !validtorqueeml($_POST["torque_eml"]) || availabletorqueeml($_POST["torque_eml"])==0 ) { $error["torque_eml"] = true; }
 		//** Throw error if abrp-forward-url not valid
 		if ( !validabrp($_POST["abrp"]) ) { $error["abrp"] = true; }
+		//** Throw error if alert settings are not valid
+		$i=0;
+		$alertconfig="";
+		while (isset($_POST["alertfield".$i])) {
+			if ( $_POST["alertfield".$i] != "Select field" && $_POST["alertoperator".$i] != "Select compare operator" && $_POST["alertto".$i] !="" ) {
+				if (!validkey($_POST["alertfield".$i])) { $error["alertfield".$i] = true; };
+				if (!is_numeric($_POST["alertoperator".$i])) { $error["alertoperator".$i] = true; };
+				if (!is_numeric($_POST["alertto".$i])) { $error["alertto".$i] = true; };
+				if ( $_POST["alertfieldto".$i] == "Select field" || $_POST["alertoperator".$i]<3 ) $_POST["alertfieldto".$i]="";
+				if (!validkey($_POST["alertfieldto".$i])) { $error["alertfieldto".$i] = true; };
+				$alertconfig .= "|A&" . $_POST["alertfield".$i] . "&" . $_POST["alertoperator".$i] . "&" . $_POST["alertto".$i] . "&" . $_POST["alertfieldto".$i];
+			}
+			$i++;
+		}
 		//** update userdata to database
+		//print_r($error);
 		if (!$error ) {
 			//** If Password is set, generate hash and save to DB
 			if ($_POST["pass"] != "") $data["password"] = password_hash($_POST["pass"], PASSWORD_DEFAULT);
+			//** If email changed, send activation link etc.
 			if ( $_SESSION["torque_useremail"] != $_POST["email"] ) {
 				$token=bin2hex(random_bytes(32));
 				$data["token"]=time() . "@" . $token . "@" . $_POST["email"];
 				mail($_POST["email"],"Activate new email","Your new email needs activation.\nThis is the activation link: http://".$_SERVER['SERVER_NAME']."/activate.php?token=".$token, $email_headers);
 			}
+			//** prepare data for sql update
 			$data["torque_eml"]=$_POST["torque_eml"];
 			$data["abrp"]=$_POST["abrp"];
-			$data["config"]=$_SESSION["torque_config"];
+			$data["config"]="abcd".$alertconfig;
 			$data["config"][0]=is_true($_POST["config-sf"]);
 			$data["config"][1]=is_true($_POST["config-uf"]);
 			$data["config"][2]=is_true($_POST["config-sm"]);
 			$data["config"][3]=is_true($_POST["config-um"]);
 			foreach ($data as $key => $value) {
 				$entries[] = $key ." = ". quote_value($value);
-				//$debug.=$_POST[$value];
 			}
 			//** update user entry
 			$userqry = mysqli_query($con, "UPDATE users SET ". implode(", ", $entries) .
@@ -203,12 +214,17 @@ function availabletorqueeml($var) {
 
 function validabrp($var) {
 	//** check for valid abrp forward address
-	if ( empty($var) || preg_match("/^http:\/\/api\.iternio\.com\/1\/tlm\/torque$/", $var) ) return true;
+	if ( empty($var) || preg_match("/^http:\/\/api\.iternio\.com\/[a-z0-9\/]*$/", $var) ) return true;
 }
 
 function validtoken($var) {
 	//** valid token (hex characters)
 	if ( preg_match("/^[a-f0-9]{64}$/", $var) ) return true;
+}
+
+function validkey($var) {
+	//** valid torque key
+	if ( preg_match("/^k[a-f0-9]{1,6}$/", $var) || $var=="" ) return true;
 }
 
 function is_true($val){

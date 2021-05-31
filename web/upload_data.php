@@ -198,6 +198,9 @@ if (sizeof($_GET) > 0) {
   $datavalues[] = $sesstime;
 #echo "<br />Debug 30 $submitval ".sizeof($datakeys)." ".sizeof($datavalues)."<br />";
   if ( $submitval == 2 && ( sizeof($datakeys) === sizeof($datavalues) ) && sizeof($datakeys) > 0 ) {
+
+	require_once('upload_alerts.php');
+
 #echo "<br />Debug 31<br />";
     // Now insert the data for all the fields into the raw logs table
     $sql = "INSERT INTO $db_table_full (".quote_names($datakeys).") VALUES (".quote_values($datavalues).")";
