@@ -1,4 +1,3 @@
-<pre>
 <?php
 require_once("./db.php");
 require_once("./auth_user.php");
@@ -21,8 +20,8 @@ if (isset($_GET["d"])) {
 	else if ($_GET["d"]=="torque" || $_GET["d"]=="all") {
 		foreach ($alltables as $table) {
 			$sql = mysqli_query($con, "DELETE FROM $table WHERE user='" . $_SESSION["torque_userid"] . "'") or die(mysqli_error($con));
-			$sql = mysqli_query($con, "DELETE FROM $db_sessions_table WHERE eml='" . $_SESSION["torque_eml"] . "'") or die(mysqli_error($con));
 		}
+		$sql = mysqli_query($con, "DELETE FROM $db_sessions_table WHERE eml='" . $_SESSION["torque_eml"] . "'") or die(mysqli_error($con));
 		if ($_GET["d"]=="torque") header("Location: ./signup.php?del");
 	}
 	//** delete account
@@ -31,7 +30,14 @@ if (isset($_GET["d"])) {
 		$sql = mysqli_query($con, "DELETE FROM $db_users_table WHERE id='" . $_SESSION["torque_userid"] . "'") or die(mysqli_error($con));
 		logout_user();
 	}
+	//** donate data
+	if ($_GET["d"]=="donate") {
+		foreach ($alltables as $table) {
+			$sql = mysqli_query($con, "UPDATE $table SET `user`='0', `kff1005`='0', `kff1006`='0' WHERE user='" . $_SESSION["torque_userid"] . "'") or die(mysqli_error($con));
+		}
+		$sql = mysqli_query($con, "UPDATE $db_sessions_table SET `id`='0', `eml`='0' WHERE eml='" . $_SESSION["torque_eml"] . "'") or die(mysqli_error($con));
+		header("Location: ./signup.php?del");
+	}
 }
 
 ?>
-</pre>

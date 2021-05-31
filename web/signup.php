@@ -93,10 +93,24 @@ require_once("./auth_signup.php");
 		<div class="col-md-6 col-xs-12">
 			<h4>My Data</h4>
 			<p>The data saved here is very sensitive. So you are completely in control of your personal data!</p>
-			<p>You have three options to delete your data.</p>
+			<p>You have the below options to delete your data or anonymize and donate it.</p>
 			<p>You can either anonymize your GPS positions in all logged data-sessions or delete all logged data. Finally you can delete your account and all associated data.</p>
 			<p>Every option further down includes the upper options. Deleting your account will also delete all your data. Deleting all your data will keep your account active.</p>
 			
+			<div class="mb-4 clearfix">
+			<h5>Donate my Data</h5>
+			<p>Donate your data instead of deleting everything.</p>
+			<p>This will anonymize your data, so it can be used for statistical analysis.</p>
+			<p>All GPS locations will be reset to 0,0 just like below. All data will be deleted from your account and moved to a generic user! This user will have all donated data of all users that chose to donate their data.
+			   At that point your data cannot be distinguished from all the other data that is saved with that generic user.</p>
+			<p>The data can be used to ex. analyse charging speeds etc.</p>
+			<p><strong>Thank you very much</strong> if you choose to donate your data instead of deleting it.</p>
+			<p>Your account information will stay untouched, you can start collecting new data if you choose so.</p>
+			<button type="button" class="btn btn-danger float-end col-12" onClick="$('#delete').attr('id','delete-donate');" data-bs-toggle="modal" data-bs-target="#delete-data">
+				Donate my data
+			</button>
+			</div>
+
 			<div class="mb-4 clearfix">
 			<h5>Reset GPS data</h5>
 			<p>Delete all my GPS lat & long data.</p>
