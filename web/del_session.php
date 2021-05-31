@@ -19,7 +19,10 @@ if (isset($deletesession) && !empty($deletesession)) {
     $tableYear = date( "Y", $deletesession/1000 );
     $tableMonth = date( "m", $deletesession/1000 );
     $db_table_full = "{$db_table}_{$tableYear}_{$tableMonth}";
-    if (isset($deletefrom) && !empty($deletefrom) && isset($deleteto) && !empty($deleteto)) $range = " AND time >= " . quote_value($deletefrom) . " AND time <= " . quote_value($deleteto);
+    if (isset($deletefrom) && !empty($deletefrom) && isset($deleteto) && !empty($deleteto)) {
+		$range = " AND time >= " . quote_value($deletefrom) . " AND time <= " . quote_value($deleteto);
+		$backtodelsession = $deletesession;
+	}
 	else {
 		$range = "";
 		$delresult = mysqli_query($con, "DELETE FROM $db_sessions_table WHERE session=" . quote_value($deletesession) . " AND eml=" . quote_value($_SESSION["torque_eml"]) ) or die(mysqli_error($con));
@@ -33,6 +36,7 @@ if (isset($deletesession) && !empty($deletesession)) {
 		$userqry= "UPDATE $db_sessions_table SET `time` = ".quote_value($row["start"]).", `timestart` = ".quote_value($row["start"]).", `timeend` = ".quote_value($row["end"]).", `sessionsize` = ".quote_value($row["size"])." WHERE session=" . quote_value($deletesession);
 		mysqli_query($con, $userqry) or die(mysqli_error($con));
 	}
+	if (isset($backtodelsession)) header("Location: ./session.php?id=".$backtodelsession);
 }
 //echo "<!-- End del_session.php at ".date("H:i:s", microtime(true))." -->\r\n";
 ?>
